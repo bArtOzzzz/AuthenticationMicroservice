@@ -91,12 +91,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", config =>
     {
         config.SetIsOriginAllowedToAllowWildcardSubdomains()
-        // localhost - front trace
-        .WithOrigins("http://localhost:5000", "https://localhost:5001")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials()
-        .Build();
+              .WithOrigins("http://localhost:5000", "https://localhost:5001")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .Build();
     });
 });
 
@@ -113,9 +112,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
