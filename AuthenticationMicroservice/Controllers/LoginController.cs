@@ -45,7 +45,7 @@ namespace AuthenticationMicroservice.Controllers
 
             UserDto? loggedInUser = await _authenticateService.AuthenticateAsync(userLogin.Username, userLogin.Password);
 
-            if (loggedInUser == null)
+            if (string.IsNullOrWhiteSpace(userLogin.Username) || string.IsNullOrWhiteSpace(userLogin.Password))
                 return NotFound("User doesn't exist");
             else if (!BCrypt.Net.BCrypt.Verify(userLogin.Password, loggedInUser.Password))
                 return Unauthorized("Username or password is incorrect");

@@ -48,7 +48,7 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> CreateAsync(RoleModel role)
         {
             if (role == null || !ModelState.IsValid)

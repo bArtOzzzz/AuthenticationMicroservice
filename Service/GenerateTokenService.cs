@@ -42,15 +42,23 @@ namespace Services
         {
             if (user != null)
             {
-                var currentUser = await _rolesRepository.GetByIdAsync(user.RoleId);
-                var currentUserRole = _mapper.Map<RoleDto>(currentUser);
+                var CurrentRole = await _rolesRepository.GetByIdAsync(user.RoleId);
 
                 Claim[]? claims = new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim("Id", user.Id.ToString()),
+                    new Claim("Email", user.EmailAddress),
+                    new Claim("Role", CurrentRole.Role),
+
+                    // Var 2
+                    /*new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.EmailAddress),
-                    new Claim(ClaimTypes.Role, currentUserRole.Role)
-                };
+                    new Claim(ClaimTypes.Role, CurrentRole.Role),*/
+
+                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']: string;
+                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']: string;
+                    //['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']: string;
+            };
 
                 JwtSecurityToken? token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],
