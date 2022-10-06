@@ -46,28 +46,24 @@ namespace Services
 
                 Claim[]? claims = new[]
                 {
-                    new Claim("Id", user.Id.ToString()),
-                    new Claim("Email", user.EmailAddress),
-                    new Claim("Role", CurrentRole.Role),
-
-                    // Var 2
-                    /*new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.EmailAddress),
-                    new Claim(ClaimTypes.Role, CurrentRole.Role),*/
+                    new Claim(ClaimTypes.Role, CurrentRole.Role)
 
-                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']: string;
-                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']: string;
-                    //['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']: string;
-            };
+                    // Claims schemas
+                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']: Id;
+                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']: EmailAddress;
+                    //['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']: Role;
+                };
 
                 JwtSecurityToken? token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],
                     audience: _configuration["Jwt:Audience"],
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(15),
+                    expires: DateTime.UtcNow.AddMinutes(5),
                     signingCredentials: new SigningCredentials(
                                         new SymmetricSecurityKey(
-                                            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                                            Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
                                             SecurityAlgorithms.HmacSha512Signature));
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
@@ -110,7 +106,7 @@ namespace Services
                 ValidIssuer = _configuration["Jwt:Issuer"],
                 ValidAudience = _configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
-                                       Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                                       Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]))
             }, out securityToken);
 
             JwtSecurityToken? token = new JwtSecurityToken(
@@ -118,8 +114,8 @@ namespace Services
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: new SigningCredentials(
                                     new SymmetricSecurityKey(
-                                       Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-                                       SecurityAlgorithms.HmacSha256Signature));
+                                        Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
+                                        SecurityAlgorithms.HmacSha512Signature));
 
             string? jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
             TokenDto response = new TokenDto()
