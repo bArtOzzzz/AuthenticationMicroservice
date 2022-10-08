@@ -8,6 +8,9 @@ using Repositories.Abstract;
 using Repositories;
 using Services.Abstract;
 using Services;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
+using AuthenticationMicroservice.HealthChecks.DatabaseCheck;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +67,11 @@ builder.Services.AddDbContext<DataContext>(options =>
            .MigrationsAssembly("AuthenticationMicroservice"));
 });
 
+// Add Healthcheck
+builder.Services.AddHealthChecks()
+                .AddCheck<DatabaseHealthCheck>(nameof(DatabaseHealthCheck))
+                .AddCheck<PingHealthCheck>(nameof(PingHealthCheck));
+
 // Enable CORS
 builder.Services.AddCors(options =>
 {
@@ -81,6 +89,13 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigins");
+
+// Healthcheck 
+app.MapHealthChecks("/health", new HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    AllowCachingResponses = false
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
