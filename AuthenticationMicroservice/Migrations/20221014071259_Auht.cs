@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AuthenticationMicroservice.Migrations
 {
-    public partial class FridgeDb : Migration
+    public partial class Auht : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,22 +49,22 @@ namespace AuthenticationMicroservice.Migrations
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedDate", "Role" },
-                values: new object[] { new Guid("23b8fdd2-5f83-47d9-96ee-19cefbc356cf"), new DateTime(2022, 10, 2, 10, 18, 28, 288, DateTimeKind.Utc).AddTicks(6977), "Administrator" });
+                values: new object[] { new Guid("8f7e348b-82d2-4081-9bcc-bb3ef8e0fff3"), new DateTime(2022, 10, 14, 7, 12, 59, 215, DateTimeKind.Utc).AddTicks(5536), "Administrator" });
 
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedDate", "Role" },
-                values: new object[] { new Guid("55b14b79-f497-4b37-aaaa-3cf57ba31cd8"), new DateTime(2022, 10, 2, 10, 18, 28, 288, DateTimeKind.Utc).AddTicks(6982), "User" });
+                values: new object[] { new Guid("fd010e4d-cd37-4ca9-a98a-222c32e90e4a"), new DateTime(2022, 10, 14, 7, 12, 59, 215, DateTimeKind.Utc).AddTicks(5540), "User" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedDate", "EmailAddress", "Password", "RefreshToken", "RefreshTokenExpiryTime", "RoleId", "Username" },
-                values: new object[] { new Guid("66316569-18ae-4096-8158-670804d563a0"), new DateTime(2022, 10, 2, 10, 18, 28, 56, DateTimeKind.Utc).AddTicks(4184), "SonicHedgehog@gmail.com", "$2a$11$9bJrCsPmbvMHkpA9/mH6pOJJh2Jj65JqkWd5oGBzydPcFPxeDtJIS", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("23b8fdd2-5f83-47d9-96ee-19cefbc356cf"), "Sonic" });
+                values: new object[] { new Guid("1c2b3665-df04-4938-8a78-5ad0db67182c"), new DateTime(2022, 10, 14, 7, 12, 58, 971, DateTimeKind.Utc).AddTicks(8028), "SonicHedgehog@gmail.com", "$2a$11$OGrzACnKXpVtzi4BPtGG/.frca7BZzcI1XPdESf3rVPYtvmqtxv5m", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("8f7e348b-82d2-4081-9bcc-bb3ef8e0fff3"), "Sonic" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedDate", "EmailAddress", "Password", "RefreshToken", "RefreshTokenExpiryTime", "RoleId", "Username" },
-                values: new object[] { new Guid("7463359d-a42e-43b0-9e4a-05d3d28b030a"), new DateTime(2022, 10, 2, 10, 18, 28, 172, DateTimeKind.Utc).AddTicks(7474), "User@gmail.com", "$2a$11$5vScpRVLsFqdrDjcChKO0ex474weGUpvOotWqtia2YbRdFh6mUtNu", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("55b14b79-f497-4b37-aaaa-3cf57ba31cd8"), "User" });
+                values: new object[] { new Guid("ecb68204-0d99-4b2d-9d55-c4b7351af908"), new DateTime(2022, 10, 14, 7, 12, 59, 96, DateTimeKind.Utc).AddTicks(2826), "User@gmail.com", "$2a$11$N8XwZ6bno9hJyFp/PkPmv.Kb6GKoW9jOhc1.0LdANi..661PaY.xG", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("fd010e4d-cd37-4ca9-a98a-222c32e90e4a"), "User" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",

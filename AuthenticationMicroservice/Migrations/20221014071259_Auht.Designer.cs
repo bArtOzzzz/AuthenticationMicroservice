@@ -12,8 +12,8 @@ using Repositories.Context;
 namespace AuthenticationMicroservice.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221002101828_FridgeDb")]
-    partial class FridgeDb
+    [Migration("20221014071259_Auht")]
+    partial class Auht
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,14 +44,14 @@ namespace AuthenticationMicroservice.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("23b8fdd2-5f83-47d9-96ee-19cefbc356cf"),
-                            CreatedDate = new DateTime(2022, 10, 2, 10, 18, 28, 288, DateTimeKind.Utc).AddTicks(6977),
+                            Id = new Guid("8f7e348b-82d2-4081-9bcc-bb3ef8e0fff3"),
+                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 59, 215, DateTimeKind.Utc).AddTicks(5536),
                             Role = "Administrator"
                         },
                         new
                         {
-                            Id = new Guid("55b14b79-f497-4b37-aaaa-3cf57ba31cd8"),
-                            CreatedDate = new DateTime(2022, 10, 2, 10, 18, 28, 288, DateTimeKind.Utc).AddTicks(6982),
+                            Id = new Guid("fd010e4d-cd37-4ca9-a98a-222c32e90e4a"),
+                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 59, 215, DateTimeKind.Utc).AddTicks(5540),
                             Role = "User"
                         });
                 });
@@ -98,22 +98,22 @@ namespace AuthenticationMicroservice.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("66316569-18ae-4096-8158-670804d563a0"),
-                            CreatedDate = new DateTime(2022, 10, 2, 10, 18, 28, 56, DateTimeKind.Utc).AddTicks(4184),
+                            Id = new Guid("1c2b3665-df04-4938-8a78-5ad0db67182c"),
+                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 58, 971, DateTimeKind.Utc).AddTicks(8028),
                             EmailAddress = "SonicHedgehog@gmail.com",
-                            Password = "$2a$11$9bJrCsPmbvMHkpA9/mH6pOJJh2Jj65JqkWd5oGBzydPcFPxeDtJIS",
+                            Password = "$2a$11$OGrzACnKXpVtzi4BPtGG/.frca7BZzcI1XPdESf3rVPYtvmqtxv5m",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RoleId = new Guid("23b8fdd2-5f83-47d9-96ee-19cefbc356cf"),
+                            RoleId = new Guid("8f7e348b-82d2-4081-9bcc-bb3ef8e0fff3"),
                             Username = "Sonic"
                         },
                         new
                         {
-                            Id = new Guid("7463359d-a42e-43b0-9e4a-05d3d28b030a"),
-                            CreatedDate = new DateTime(2022, 10, 2, 10, 18, 28, 172, DateTimeKind.Utc).AddTicks(7474),
+                            Id = new Guid("ecb68204-0d99-4b2d-9d55-c4b7351af908"),
+                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 59, 96, DateTimeKind.Utc).AddTicks(2826),
                             EmailAddress = "User@gmail.com",
-                            Password = "$2a$11$5vScpRVLsFqdrDjcChKO0ex474weGUpvOotWqtia2YbRdFh6mUtNu",
+                            Password = "$2a$11$N8XwZ6bno9hJyFp/PkPmv.Kb6GKoW9jOhc1.0LdANi..661PaY.xG",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RoleId = new Guid("55b14b79-f497-4b37-aaaa-3cf57ba31cd8"),
+                            RoleId = new Guid("fd010e4d-cd37-4ca9-a98a-222c32e90e4a"),
                             Username = "User"
                         });
                 });

@@ -11,6 +11,10 @@ using Services;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
 using AuthenticationMicroservice.HealthChecks.DatabaseCheck;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +44,25 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Add Versioning for swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FridgeJWTToken", 
+                                         Version = "v1" });
+    c.SwaggerDoc("v2", new OpenApiInfo { Title = "FridgeJWTToken", 
+                                         Version = "v2" });
+});
+
+// Add Fluent Validation
+#pragma warning disable CS0618 // Type or member is obsolete
+builder.Services.AddFluentValidation(x =>
+{
+    x.ImplicitlyValidateChildProperties = true;
+    x.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+    x.AutomaticValidationEnabled = false;
+});
+#pragma warning restore CS0618 // Type or member is obsolete
 
 // Add JWT Bearer  validation for Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -86,6 +108,23 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add API Versionings
+builder.Services.AddApiVersioning(opt =>
+{
+    opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.ReportApiVersions = true;
+    opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                                                    new HeaderApiVersionReader("x-api-version"),
+                                                    new MediaTypeApiVersionReader("x-api-version"));
+});
+
+builder.Services.AddVersionedApiExplorer(config =>
+{
+    config.GroupNameFormat = "'v'VVV";
+    config.SubstituteApiVersionInUrl = true;
+});
+
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigins");
@@ -101,8 +140,11 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c
-       .SwaggerEndpoint("/swagger/v1/swagger.json", "FridgeJWTToken v1"));
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "FridgeJWTToken v1");
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "FridgeJWTToken v2");
+    });
 }
 
 app.UseHttpsRedirection();

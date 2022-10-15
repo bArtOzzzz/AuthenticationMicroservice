@@ -7,8 +7,11 @@ using Services.Dto;
 
 namespace AuthenticationMicroservice.Controllers
 {
-    [Route("api/")]
+    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [AllowAnonymous]
     [ApiController]
+    [ApiVersion("1.0")]
     public class LoginController : Controller
     {
         private readonly IAuthenticateService _authenticateService;
@@ -28,16 +31,15 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpGet("Exist/{username}")]
-        [AllowAnonymous]
-        public async Task<ActionResult> isExist(string username)
+        [MapToApiVersion("1.0")]
+        public async Task<ActionResult> IsExist(string username)
         {
             bool isExist = await _registerService.ExistsAsync(username);
             return Ok(isExist);
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("Login")]
+        [HttpPost("Login")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> Login(UserLoginModel userLogin)
         {
             if (userLogin == null)
@@ -47,7 +49,7 @@ namespace AuthenticationMicroservice.Controllers
 
             if (string.IsNullOrWhiteSpace(userLogin.Username) || string.IsNullOrWhiteSpace(userLogin.Password))
                 return NotFound("User doesn't exist");
-            else if (!BCrypt.Net.BCrypt.Verify(userLogin.Password, loggedInUser.Password))
+            else if (!BCrypt.Net.BCrypt.Verify(userLogin.Password, loggedInUser!.Password))
                 return Unauthorized("Username or password is incorrect");
 
             string? accessToken = await _generateTokenService.GenerateAccessTokenAsync(loggedInUser);
@@ -65,9 +67,8 @@ namespace AuthenticationMicroservice.Controllers
             return Ok(token);
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("RefreshToken")]
+        [HttpPost("RefreshToken")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> RefreshToken(TokenDto tokenResponse)
         {
             UserDto? currentUser = await _generateTokenService.GetUserByTokenAsync(tokenResponse.RefreshToken!);
@@ -80,9 +81,8 @@ namespace AuthenticationMicroservice.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("Register")]
+        [HttpPost("Register")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> Register(UserModel userRegister)
         {
             if (userRegister == null)
@@ -91,7 +91,7 @@ namespace AuthenticationMicroservice.Controllers
             UserDto? userMap = _mapper.Map<UserDto>(userRegister);
 
             if (await _registerService.ExistsAsync(userMap.Username) == true)
-                return BadRequest("Username already exist.");
+                return Ok("Username already exist");
 
             if (userMap != null)
                 await _registerService.RegisterAsync(userMap);
