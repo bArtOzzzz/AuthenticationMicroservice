@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repositories.Abstract;
-using Repositories.Context;
 using Repositories.Entities;
+using Repositories.Context;
 
 namespace Repositories
 {

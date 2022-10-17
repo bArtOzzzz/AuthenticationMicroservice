@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using Repositories.Abstract;
+﻿using Repositories.Abstract;
 using Services.Abstract;
 using Services.Dto;
+using AutoMapper;
 
 namespace Services
 {

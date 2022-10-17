@@ -6,20 +6,20 @@ namespace Services.Abstract
     {
         // GET
         Task<List<UserDto>> GetAllAsync();
-        Task<UserDto?> GetByIdAsync(Guid id);
+        Task<UserDto?> GetByIdAsync(Guid userId);
 
         // PUT
         Task<Guid> UpdateAsync(Guid userId, UserDto user);
-        Task<Guid> UpdateNameAsync(Guid id, UserDto user);
-        Task<Guid> UpdateEmailAsync(Guid id, UserDto user);
-        Task<Guid> UpdatePasswordAsync(Guid id, UserDto user);
-        Task<string> ResetPasswordAsync(Guid id);
+        Task<Guid> UpdateNameAsync(Guid userId, UserDto user);
+        Task<Guid> UpdateEmailAsync(Guid userId, UserDto user);
+        Task<Guid> UpdatePasswordAsync(Guid userId, UserDto user);
+        Task<string> ResetPasswordAsync(Guid userId);
 
         // DELETE
         Task<bool> DeleteAsync(UserDto user);
 
         // EXISTS
-        Task<bool> IsExistUserAsync(Guid id);
+        Task<bool> IsExistUserAsync(Guid userId);
         Task<bool> IsExistUserNameAsync(string username);
     }
 }

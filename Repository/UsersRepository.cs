@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repositories.Abstract;
-using Repositories.Context;
 using Repositories.Entities;
+using Repositories.Context;
 
 namespace Repositories
 {
@@ -19,9 +19,9 @@ namespace Repositories
                                        .ToListAsync();
         }
 
-        public async Task<UserEntity?> GetByIdAsync(Guid id)
+        public async Task<UserEntity?> GetByIdAsync(Guid userId)
         {
-            return await _context.Users.Where(u => u.Id.Equals(id))
+            return await _context.Users.Where(u => u.Id.Equals(userId))
                                        .AsNoTracking()
                                        .FirstOrDefaultAsync();
         }
@@ -32,7 +32,7 @@ namespace Repositories
             var currentUser = await _context.Users.Where(u => u.Id.Equals(userId))
                                                   .FirstOrDefaultAsync();
 
-            currentUser.EmailAddress = user.EmailAddress;
+            currentUser!.EmailAddress = user.EmailAddress;
             currentUser.Username = user.Username;
             currentUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
@@ -47,7 +47,7 @@ namespace Repositories
             var currentUser = await _context.Users.Where(u => u.Id.Equals(userId))
                                                   .FirstOrDefaultAsync();
 
-            currentUser.Username = user.Username;
+            currentUser!.Username = user.Username;
 
             _context.Update(currentUser);
             await _context.SaveChangesAsync();
@@ -60,7 +60,7 @@ namespace Repositories
             var currentUser = await _context.Users.Where(u => u.Id.Equals(userId))
                                                   .FirstOrDefaultAsync();
 
-            currentUser.EmailAddress = user.EmailAddress;
+            currentUser!.EmailAddress = user.EmailAddress;
 
             _context.Update(currentUser);
             await _context.SaveChangesAsync();
@@ -73,7 +73,7 @@ namespace Repositories
             var currentUser = await _context.Users.Where(u => u.Id.Equals(userId))
                                                   .FirstOrDefaultAsync();
 
-            currentUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            currentUser!.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _context.Update(currentUser);
             await _context.SaveChangesAsync();
@@ -81,14 +81,14 @@ namespace Repositories
             return userId;
         }
 
-        public async Task<string> ResetPasswordAsync(Guid id)
+        public async Task<string> ResetPasswordAsync(Guid userId)
         {
-            var currentUser = await _context.Users.Where(u => u.Id.Equals(id))
+            var currentUser = await _context.Users.Where(u => u.Id.Equals(userId))
                                                   .FirstOrDefaultAsync();
 
             var newPassword = RandomString(12);
 
-            currentUser.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            currentUser!.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
 
             _context.Update(currentUser);
             await _context.SaveChangesAsync();
@@ -105,6 +105,16 @@ namespace Repositories
             return await saved > 0;
         }
 
+        // EXISTS
+        public async Task<bool> IsExistUserAsync(Guid userId)
+        {
+            return await _context.Users.AnyAsync(u => u.Id.Equals(userId));
+        }
+        public async Task<bool> IsExistUserNameAsync(string username)
+        {
+            return await _context.Users.AnyAsync(f => f.Username!.Equals(username));
+        }
+
         //___________________________________________
         // Generate random password (For reset)
         private Random random = new Random();
@@ -117,16 +127,6 @@ namespace Repositories
                                         .Select(s => s[random
                                         .Next(s.Length)])
                                         .ToArray());
-        }
-
-        // EXISTS
-        public async Task<bool> IsExistUserAsync(Guid id)
-        {
-            return await _context.Users.AnyAsync(u => u.Id.Equals(id));
-        }
-        public async Task<bool> IsExistUserNameAsync(string username)
-        {
-            return await _context.Users.AnyAsync(f => f.Username.Equals(username));
         }
     }
 }

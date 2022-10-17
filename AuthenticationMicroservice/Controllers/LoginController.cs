@@ -44,7 +44,7 @@ namespace AuthenticationMicroservice.Controllers
             if (userLogin == null)
                 return Unauthorized("Invalid data user");
 
-            UserDto? loggedInUser = await _authenticateService.AuthenticateAsync(userLogin.Username, userLogin.Password);
+            UserDto? loggedInUser = await _authenticateService.AuthenticateAsync(userLogin.Username!, userLogin.Password!);
 
             if (string.IsNullOrWhiteSpace(userLogin.Username) || string.IsNullOrWhiteSpace(userLogin.Password))
                 return NotFound("User doesn't exist");
@@ -89,7 +89,7 @@ namespace AuthenticationMicroservice.Controllers
 
             UserDto? userMap = _mapper.Map<UserDto>(userRegister);
 
-            if (await _registerService.ExistsAsync(userMap.Username) == true)
+            if (await _registerService.ExistsAsync(userMap.Username!) == true)
                 return Ok("Username already exist");
 
             if (userMap != null)

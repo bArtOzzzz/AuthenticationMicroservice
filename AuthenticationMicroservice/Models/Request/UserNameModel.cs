@@ -2,6 +2,6 @@
 {
     public class UserNameModel
     {
-        public string Username { get; set; }
+        public string? Username { get; set; }
     }
 }

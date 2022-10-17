@@ -1,14 +1,14 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using System.Security.Claims;
 using Repositories.Abstract;
 using Repositories.Entities;
 using Services.Abstract;
 using Services.Dto;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
+using AutoMapper;
 
 namespace Services
 {
@@ -42,13 +42,13 @@ namespace Services
         {
             if (user != null)
             {
-                var CurrentRole = await _rolesRepository.GetByIdAsync(user.RoleId);
+                RoleEntity? currentRole = await _rolesRepository.GetByIdAsync(user.RoleId);
 
                 Claim[]? claims = new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.EmailAddress),
-                    new Claim(ClaimTypes.Role, CurrentRole.Role)
+                    new Claim(ClaimTypes.Email, user.EmailAddress!),
+                    new Claim(ClaimTypes.Role, currentRole.Role!)
 
                     // Claims schemas
                     //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']: Id;

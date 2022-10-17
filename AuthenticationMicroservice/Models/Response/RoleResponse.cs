@@ -4,6 +4,6 @@
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string Role { get; set; }
+        public string? Role { get; set; }
     }
 }

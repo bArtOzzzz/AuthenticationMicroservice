@@ -6,7 +6,7 @@ namespace Repositories.Abstract
     {
         // GET
         Task<List<RoleEntity>> GetAllAsync();
-        Task<RoleEntity?> GetByIdAsync(Guid id);
+        Task<RoleEntity?> GetByIdAsync(Guid roleId);
 
         // POST
         Task<Guid> CreateAsync(RoleEntity role);

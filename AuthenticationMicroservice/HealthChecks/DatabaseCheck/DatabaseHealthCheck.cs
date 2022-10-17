@@ -1,5 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Data.SqlClient;
 
 namespace AuthenticationMicroservice.HealthChecks.DatabaseCheck
 {
@@ -9,7 +9,8 @@ namespace AuthenticationMicroservice.HealthChecks.DatabaseCheck
 
         public DatabaseHealthCheck(IConfiguration configuration) => _configuration = configuration;
 
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, 
+                                                        CancellationToken cancellationToken = default)
         {
             var isHealthy = HealthCheckResult.Healthy();
 

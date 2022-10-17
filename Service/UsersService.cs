@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Repositories.Abstract;
+﻿using Repositories.Abstract;
 using Repositories.Entities;
 using Services.Abstract;
 using Services.Dto;
+using AutoMapper;
 
 namespace Services
 {
@@ -26,9 +26,9 @@ namespace Services
             return _mapper.Map<List<UserDto>>(users);
         }
 
-        public async Task<UserDto?> GetByIdAsync(Guid id)
+        public async Task<UserDto?> GetByIdAsync(Guid userId)
         {
-            var user = await _usersRepository.GetByIdAsync(id);
+            var user = await _usersRepository.GetByIdAsync(userId);
 
             return _mapper.Map<UserDto>(user);
         }
@@ -41,30 +41,30 @@ namespace Services
             return await _usersRepository.UpdateAsync(userId, userMap);
         }
 
-        public async Task<Guid> UpdateNameAsync(Guid id, UserDto user)
+        public async Task<Guid> UpdateNameAsync(Guid userId, UserDto user)
         {
             var userMap = _mapper.Map<UserEntity>(user);
 
-            return await _usersRepository.UpdateNameAsync(id, userMap);
+            return await _usersRepository.UpdateNameAsync(userId, userMap);
         }
 
-        public async Task<Guid> UpdateEmailAsync(Guid id, UserDto user)
+        public async Task<Guid> UpdateEmailAsync(Guid userId, UserDto user)
         {
             var userMap = _mapper.Map<UserEntity>(user);
 
-            return await _usersRepository.UpdateEmailAsync(id, userMap);
+            return await _usersRepository.UpdateEmailAsync(userId, userMap);
         }
 
-        public async Task<Guid> UpdatePasswordAsync(Guid id, UserDto user)
+        public async Task<Guid> UpdatePasswordAsync(Guid userId, UserDto user)
         {
             var userMap = _mapper.Map<UserEntity>(user);
 
-            return await _usersRepository.UpdatePasswordAsync(id, userMap);
+            return await _usersRepository.UpdatePasswordAsync(userId, userMap);
         }
 
-        public async Task<string> ResetPasswordAsync(Guid id)
+        public async Task<string> ResetPasswordAsync(Guid userId)
         {
-            return await _usersRepository.ResetPasswordAsync(id);
+            return await _usersRepository.ResetPasswordAsync(userId);
         }
 
         // DELETE
@@ -75,9 +75,9 @@ namespace Services
         }
 
         // EXISTS
-        public async Task<bool> IsExistUserAsync(Guid id)
+        public async Task<bool> IsExistUserAsync(Guid userId)
         {
-            return await _usersRepository.IsExistUserAsync(id);
+            return await _usersRepository.IsExistUserAsync(userId);
         }
 
         public async Task<bool> IsExistUserNameAsync(string username)

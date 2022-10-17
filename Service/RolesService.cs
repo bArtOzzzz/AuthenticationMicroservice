@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Repositories.Abstract;
+﻿using Repositories.Abstract;
 using Repositories.Entities;
 using Services.Abstract;
 using Services.Dto;
+using AutoMapper;
 
 namespace Services
 {
@@ -26,9 +26,9 @@ namespace Services
             return _mapper.Map<List<RoleDto>>(roles);
         }
 
-        public async Task<RoleDto?> GetByIdAsync(Guid id)
+        public async Task<RoleDto?> GetByIdAsync(Guid roleId)
         {
-            var role = await _rolesRepository.GetByIdAsync(id);
+            var role = await _rolesRepository.GetByIdAsync(roleId);
 
             return _mapper.Map<RoleDto>(role);
         }

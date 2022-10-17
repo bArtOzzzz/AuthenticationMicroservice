@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repositories.Abstract;
-using Repositories.Context;
 using Repositories.Entities;
+using Repositories.Context;
 
 namespace Repositories
 {
@@ -15,7 +15,7 @@ namespace Repositories
         // POST
         public async Task<Guid> RegisterAsync(UserEntity user)
         {
-            var defaultRole = await _context.Roles.Where(r => r.Role.Equals("User"))
+            var defaultRole = await _context.Roles.Where(r => r.Role!.Equals("User"))
                                                   .FirstOrDefaultAsync();
 
             UserEntity userEntity = new()

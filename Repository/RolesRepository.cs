@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repositories.Abstract;
-using Repositories.Context;
 using Repositories.Entities;
+using Repositories.Context;
 
 namespace Repositories
 {
@@ -19,9 +19,9 @@ namespace Repositories
                                        .ToListAsync();
         }
 
-        public async Task<RoleEntity?> GetByIdAsync(Guid id)
+        public async Task<RoleEntity?> GetByIdAsync(Guid roleId)
         {
-            return await _context.Roles.Where(r => r.Id.Equals(id))
+            return await _context.Roles.Where(r => r.Id.Equals(roleId))
                                        .AsNoTracking()
                                        .FirstOrDefaultAsync();
         }
@@ -49,7 +49,7 @@ namespace Repositories
             var currentRole = await _context.Roles.Where(r => r.Id.Equals(roleId))
                                                   .FirstOrDefaultAsync();
 
-            currentRole.Role = role.Role;
+            currentRole!.Role = role.Role;
 
             _context.Update(currentRole);
             await _context.SaveChangesAsync();
@@ -62,11 +62,11 @@ namespace Repositories
             var currentUser = await _context.Users.Where(u => u.Id.Equals(UserId))
                                                   .FirstOrDefaultAsync();
 
-            Guid newRole = await _context.Roles.Where(r => r.Role.Equals(role.Role))
+            Guid newRole = await _context.Roles.Where(r => r.Role!.Equals(role.Role))
                                                .Select(p => p.Id)
                                                .FirstOrDefaultAsync();
 
-            currentUser.RoleId = newRole;
+            currentUser!.RoleId = newRole;
 
             _context.Update(currentUser);
             await _context.SaveChangesAsync();

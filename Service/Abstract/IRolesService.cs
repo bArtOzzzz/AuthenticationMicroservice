@@ -6,7 +6,7 @@ namespace Services.Abstract
     {
         // GET
         Task<List<RoleDto>> GetAllAsync();
-        Task<RoleDto?> GetByIdAsync(Guid id);
+        Task<RoleDto?> GetByIdAsync(Guid roleId);
 
         // POST
         Task<Guid> CreateAsync(RoleDto role);
