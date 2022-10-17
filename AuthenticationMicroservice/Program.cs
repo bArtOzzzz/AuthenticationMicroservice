@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
 using HealthChecks.UI.Client;
 using Repositories.Abstract;
 using Repositories.Context;
@@ -45,15 +46,19 @@ builder.Services.AddScoped<IRolesService, RolesService>();
 builder.Services.AddEndpointsApiExplorer();
 
 // Add Versioning for swagger
-builder.Services.AddSwaggerGen(
-/*    c =>
+builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FridgeJWTToken", 
-                                         Version = "v1" });
-    c.SwaggerDoc("v2", new OpenApiInfo { Title = "FridgeJWTToken", 
-                                         Version = "v2" });
-}*/
-);
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "FridgeJWTToken",
+        Version = "v1"
+    });
+    c.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "Users",
+        Version = "v2"
+    });
+});
 
 // Add Fluent Validation
 #pragma warning disable CS0618
@@ -110,21 +115,21 @@ builder.Services.AddCors(options =>
 });
 
 // Add API Versionings
-/*builder.Services.AddApiVersioning(opt =>
+builder.Services.AddApiVersioning(opt =>
 {
-    opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    opt.DefaultApiVersion = new ApiVersion(1, 0);
     opt.AssumeDefaultVersionWhenUnspecified = true;
     opt.ReportApiVersions = true;
     opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
                                                     new HeaderApiVersionReader("x-api-version"),
                                                     new MediaTypeApiVersionReader("x-api-version"));
-});*/
+});
 
-/*builder.Services.AddVersionedApiExplorer(config =>
+builder.Services.AddVersionedApiExplorer(config =>
 {
     config.GroupNameFormat = "'v'VVV";
     config.SubstituteApiVersionInUrl = true;
-});*/
+});
 
 var app = builder.Build();
 
@@ -144,7 +149,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "FridgeJWTToken v1");
-        //c.SwaggerEndpoint("/swagger/v2/swagger.json", "FridgeJWTToken v2");
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "Users v2");
     });
 }
 

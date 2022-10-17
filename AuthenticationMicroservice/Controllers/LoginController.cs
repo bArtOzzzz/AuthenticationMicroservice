@@ -7,11 +7,10 @@ using AutoMapper;
 
 namespace AuthenticationMicroservice.Controllers
 {
-    [Route("api/[controller]")]
-    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [AllowAnonymous]
     [ApiController]
-    //[ApiVersion("1.0")]
+    [ApiVersion("1.0")]
     public class LoginController : Controller
     {
         private readonly IAuthenticateService _authenticateService;
@@ -31,7 +30,7 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpGet("Exist/{username}")]
-        //[MapToApiVersion("1.0")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> IsExist(string username)
         {
             bool isExist = await _registerService.ExistsAsync(username);
@@ -39,7 +38,7 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpPost("Login")]
-        //[MapToApiVersion("1.0")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> Login(UserLoginModel userLogin)
         {
             if (userLogin == null)
@@ -68,7 +67,7 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpPost("RefreshToken")]
-        //[MapToApiVersion("1.0")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> RefreshToken(TokenDto tokenResponse)
         {
             UserDto? currentUser = await _generateTokenService.GetUserByTokenAsync(tokenResponse.RefreshToken!);
@@ -82,7 +81,7 @@ namespace AuthenticationMicroservice.Controllers
         }
 
         [HttpPost("Register")]
-        //[MapToApiVersion("1.0")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> Register(UserModel userRegister)
         {
             if (userRegister == null)

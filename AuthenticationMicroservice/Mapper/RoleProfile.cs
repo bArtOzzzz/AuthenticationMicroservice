@@ -1,8 +1,8 @@
-﻿using AuthenticationMicroservice.Models.Request;
-using AuthenticationMicroservice.Models.Response;
-using AutoMapper;
+﻿using AuthenticationMicroservice.Models.Response;
+using AuthenticationMicroservice.Models.Request;
 using Repositories.Entities;
 using Services.Dto;
+using AutoMapper;
 
 namespace AuthenticationMicroservice.Mapper
 {

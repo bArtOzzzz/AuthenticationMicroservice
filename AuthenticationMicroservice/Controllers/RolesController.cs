@@ -8,10 +8,9 @@ using AutoMapper;
 
 namespace AuthenticationMicroservice.Controllers
 {
-    [Route("api/[controller]")]
-    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    //[ApiVersion("2.0")]
+    [ApiVersion("2.0")]
     public class RolesController : Controller
     {
         private readonly IRolesService _rolesService;
@@ -25,7 +24,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrator")]
-        //[MapToApiVersion("2.0")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult> GetAllAsync()
         {
             if (!ModelState.IsValid)
@@ -38,7 +37,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpGet("{roleId}")]
         [Authorize(Roles = "Administrator")]
-        //[MapToApiVersion("2.0")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult> GetByIdAsync(Guid roleId)
         {
             bool isExist = await _rolesService.IsExistRoleAsync(roleId);
@@ -53,7 +52,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrator")]
-        //[MapToApiVersion("2.0")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult> CreateAsync(RoleModel role)
         {
             if (role == null || !ModelState.IsValid)
@@ -73,7 +72,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPut("updateUserRole/{userId}")]
         [Authorize(Roles = "Administrator")]
-        //[MapToApiVersion("2.0")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult> UpdateByUserAsync(Guid userId, RoleModel role)
         {
             bool isExist = await _rolesService.ISExistUserAsync(userId);
@@ -93,7 +92,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPut("{roleId}")]
         [Authorize(Roles = "Administrator")]
-        //[MapToApiVersion("2.0")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult> UpdateAsync(Guid roleId, RoleModel role)
         {
             bool isExist = await _rolesService.IsExistRoleAsync(roleId);
@@ -111,7 +110,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpDelete("{roleId}")]
         [Authorize(Roles = "Administrator")]
-        //[MapToApiVersion("2.0")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult> DeleteAsync(Guid roleId)
         {
             bool isExist = await _rolesService.IsExistRoleAsync(roleId);
