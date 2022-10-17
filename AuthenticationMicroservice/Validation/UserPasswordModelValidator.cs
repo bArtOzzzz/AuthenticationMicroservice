@@ -7,7 +7,8 @@ namespace AuthenticationMicroservice.Validation
     {
         public UserPasswordModelValidator()
         {
-            RuleFor(u => u.Password).NotNull().Length(8, 26);
+            RuleFor(u => u.Password).Length(8, 26)
+                                    .WithMessage("Password should be 8 to 26 characters");
         }
     }
 }

@@ -1,16 +1,18 @@
-﻿using AuthenticationMicroservice.Models.Request;
-using AuthenticationMicroservice.Models.Response;
-using AutoMapper;
+﻿using AuthenticationMicroservice.Models.Response;
+using AuthenticationMicroservice.Models.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Services.Abstract;
 using Services.Dto;
-using System.Security.Claims;
+using AutoMapper;
 
 namespace AuthenticationMicroservice.Controllers
 {
     [Route("api/[controller]")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    //[ApiVersion("1.0")]
     public class UsersController : Controller
     {
         private readonly IUsersService _usersService;
@@ -25,6 +27,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> GetAllAsync()
         {
             if (!ModelState.IsValid)
@@ -37,6 +40,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpGet("{userId}")]
         [Authorize(Roles = "User, Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> GetByIdAsync(Guid userId)
         {
             bool isExist = await _usersService.IsExistUserAsync(userId);
@@ -60,6 +64,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPut("{userId}")]
         [Authorize(Roles = "User, Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> UpdateAsync(Guid userId, UserModel user)
         {
             bool isExistName = await _usersService.IsExistUserNameAsync(user.Username);
@@ -89,6 +94,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPut("name/{id}")]
         [Authorize(Roles = "User, Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> UpdateNameAsync(Guid id, UserNameModel user)
         {
             bool isExist = await _usersService.IsExistUserAsync(id);
@@ -112,6 +118,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPut("email/{id}")]
         [Authorize(Roles = "User, Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> UpdateEmailAsync(Guid id, UserEmailModel user)
         {
             bool isExist = await _usersService.IsExistUserAsync(id);
@@ -131,6 +138,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPut("password/{id}")]
         [Authorize(Roles = "User, Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> UpdatePasswordAsync(Guid id, UserPasswordModel user)
         {
             bool isExist = await _usersService.IsExistUserAsync(id);
@@ -150,6 +158,7 @@ namespace AuthenticationMicroservice.Controllers
  
         [HttpPut("reset/{id}")]
         [Authorize(Roles = "Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> ResetPasswordAsync(Guid id)
         {
             bool isExist = await _usersService.IsExistUserAsync(id);
@@ -164,6 +173,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpDelete("{userId}")]
         [Authorize(Roles = "User, Administrator")]
+        //[MapToApiVersion("1.0")]
         public async Task<ActionResult> DeleteAsync(Guid userId)
         {
             bool isExist = await _usersService.IsExistUserAsync(userId);

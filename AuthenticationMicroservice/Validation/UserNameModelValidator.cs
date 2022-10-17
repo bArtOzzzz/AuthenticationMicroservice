@@ -7,7 +7,8 @@ namespace AuthenticationMicroservice.Validation
     {
         public UserNameModelValidator()
         {
-            RuleFor(u => u.Username).NotNull().Length(3, 16);
+            RuleFor(u => u.Username).Length(3, 22)
+                                    .WithMessage("Username should be 3 to 22 characters");
         }
     }
 }

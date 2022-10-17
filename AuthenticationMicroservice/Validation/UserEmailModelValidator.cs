@@ -7,7 +7,8 @@ namespace AuthenticationMicroservice.Validation
     {
         public UserEmailModelValidator()
         {
-            RuleFor(u => u.EmailAddress).EmailAddress();
+            RuleFor(u => u.EmailAddress).EmailAddress()
+                                        .WithMessage("Incorrect email or type");
         }
     }
 }
