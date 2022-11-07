@@ -20,6 +20,7 @@ namespace Repositories
 
             UserEntity userEntity = new()
             {
+                Id = Guid.NewGuid(),
                 CreatedDate = DateTime.Now,
                 Username = user.Username,
                 EmailAddress = user.EmailAddress,
@@ -30,15 +31,18 @@ namespace Repositories
             await _context.AddAsync(userEntity);
             await _context.SaveChangesAsync();
 
-            user.Id = userEntity.Id;
-
-            return user.Id;
+            return userEntity.Id;
         }
 
         // EXISTS
         public async Task<bool> ExistsAsync(string username)
         {
-            return await _context.Users.FindAsync(username) != null;
+            var result = await _context.Users.Where(u => u.Username.Equals(username)).FirstOrDefaultAsync();
+
+            if (result != null)
+                return true;
+
+            return false;
         }
     }
 }

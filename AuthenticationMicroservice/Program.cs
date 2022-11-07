@@ -1,6 +1,7 @@
 using AuthenticationMicroservice.HealthChecks.DatabaseCheck;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using AuthenticationMicroservice.Validation;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
@@ -66,7 +67,7 @@ builder.Services.AddFluentValidation(x =>
 {
     x.ImplicitlyValidateChildProperties = true;
     x.ImplicitlyValidateRootCollectionElements = true;
-    x.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+    x.RegisterValidatorsFromAssemblyContaining<RoleModelValidator>();
 });
 #pragma warning restore CS0618
 
@@ -160,3 +161,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

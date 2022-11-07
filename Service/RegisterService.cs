@@ -22,9 +22,10 @@ namespace Services
         public async Task<Guid> RegisterAsync(UserDto user)
         {
             var userMap = _mapper.Map<UserEntity>(user);
-            await _registerRepository.RegisterAsync(userMap);
-            user.Id = userMap.Id;
-            return userMap.Id;
+
+            Guid userId = await _registerRepository.RegisterAsync(userMap);
+
+            return userId;
         }
 
         // EXISTS

@@ -49,11 +49,6 @@ namespace Services
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.EmailAddress!),
                     new Claim(ClaimTypes.Role, currentRole.Role!)
-
-                    // Claims schemas
-                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']: Id;
-                    //['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']: EmailAddress;
-                    //['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']: Role;
                 };
 
                 JwtSecurityToken? token = new JwtSecurityToken(

@@ -7,7 +7,7 @@ using AutoMapper;
 
 namespace AuthenticationMicroservice.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}")]
     [AllowAnonymous]
     [ApiController]
     [ApiVersion("1.0")]
@@ -31,7 +31,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpGet("Exist/{username}")]
         [MapToApiVersion("1.0")]
-        public async Task<ActionResult> IsExist(string username)
+        public async Task<ActionResult> IsExistAsync(string username)
         {
             bool isExist = await _registerService.ExistsAsync(username);
             return Ok(isExist);
@@ -39,14 +39,14 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPost("Login")]
         [MapToApiVersion("1.0")]
-        public async Task<ActionResult> Login(UserLoginModel userLogin)
+        public async Task<ActionResult> LoginAsync(UserLoginModel userLogin)
         {
-            if (userLogin == null)
-                return Unauthorized("Invalid data user");
+            if (string.IsNullOrWhiteSpace(userLogin.Username) || string.IsNullOrWhiteSpace(userLogin.Password))
+                return NotFound("User doesn't exist");
 
             UserDto? loggedInUser = await _authenticateService.AuthenticateAsync(userLogin.Username!, userLogin.Password!);
 
-            if (string.IsNullOrWhiteSpace(userLogin.Username) || string.IsNullOrWhiteSpace(userLogin.Password))
+            if (loggedInUser == null)
                 return NotFound("User doesn't exist");
             else if (!BCrypt.Net.BCrypt.Verify(userLogin.Password, loggedInUser!.Password))
                 return Unauthorized("Username or password is incorrect");
@@ -55,7 +55,7 @@ namespace AuthenticationMicroservice.Controllers
             string? refreshToken = await _generateTokenService.CreateRefreshTokenAsync(loggedInUser);
 
             if (accessToken == null || refreshToken == null)
-                return Unauthorized("Access token or Refresh token invalid!");
+                return Unauthorized("Access denied!");
 
             var token = new TokenDto()
             {
@@ -68,7 +68,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPost("RefreshToken")]
         [MapToApiVersion("1.0")]
-        public async Task<ActionResult> RefreshToken(TokenDto tokenResponse)
+        public async Task<ActionResult> RefreshTokenAsync(TokenDto tokenResponse)
         {
             UserDto? currentUser = await _generateTokenService.GetUserByTokenAsync(tokenResponse.RefreshToken!);
 
@@ -82,7 +82,7 @@ namespace AuthenticationMicroservice.Controllers
 
         [HttpPost("Register")]
         [MapToApiVersion("1.0")]
-        public async Task<ActionResult> Register(UserModel userRegister)
+        public async Task<ActionResult> RegisterAsync(UserModel userRegister)
         {
             if (userRegister == null)
                 return NotFound();
@@ -90,14 +90,16 @@ namespace AuthenticationMicroservice.Controllers
             UserDto? userMap = _mapper.Map<UserDto>(userRegister);
 
             if (await _registerService.ExistsAsync(userMap.Username!) == true)
-                return Ok("Username already exist");
+                return UnprocessableEntity("Username already exist"); //422 or 409 (Conflict)
+
+            Guid userId;
 
             if (userMap != null)
-                await _registerService.RegisterAsync(userMap);
+                userId = await _registerService.RegisterAsync(userMap);
             else
                 return NotFound();
 
-            return Ok(userMap.Id);
+            return Ok(userId);
         }
     }
 }
