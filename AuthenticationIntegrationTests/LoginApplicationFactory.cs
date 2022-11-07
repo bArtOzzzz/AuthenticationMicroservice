@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Repositories.Abstract;
-using Repositories;
-using Repositories.Context;
-using Services.Abstract;
-using Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Repositories.Context;
+
 
 namespace AuthenticationIntegrationTests
 {

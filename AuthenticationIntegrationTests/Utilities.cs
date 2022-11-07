@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-using Repositories.Context;
+﻿using Repositories.Context;
 using Repositories.Entities;
 
 namespace AuthenticationIntegrationTests
