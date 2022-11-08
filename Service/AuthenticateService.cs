@@ -18,9 +18,9 @@ namespace Services
         }
 
         // GET
-        public async Task<UserDto?> AuthenticateAsync(string username, string password)
+        public async Task<UserDto?> AuthenticateAsync(string username)
         {
-            var user = await _authenticateRepository.AuthenticateAsync(username, password);
+            var user = await _authenticateRepository.AuthenticateAsync(username);
             return _mapper.Map<UserDto>(user);
         }
     }

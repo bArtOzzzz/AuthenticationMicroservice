@@ -8,25 +8,30 @@ using Repositories.Context;
 
 namespace AuthenticationIntegrationTests
 {
-    public class LoginApplicationFactory : WebApplicationFactory<Program>
+    public class CustomApplicationFactory : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
+                ServiceDescriptor? descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(DbContextOptions<DataContext>));
+
+                services.Remove(descriptor!);
+
                 services.AddDbContext<DataContext>(options =>
                 {
                     options.UseInMemoryDatabase("InMemoryDbForTesting");
                 });
 
-                var sp = services.BuildServiceProvider();
+                ServiceProvider sp = services.BuildServiceProvider();
 
-                using (var scope = sp.CreateScope())
+                using (IServiceScope scope = sp.CreateScope())
                 {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<DataContext>();
-                    var logger = scopedServices
-                        .GetRequiredService<ILogger<LoginApplicationFactory>>();
+                    IServiceProvider scopedServices = scope.ServiceProvider;
+                    DataContext db = scopedServices.GetRequiredService<DataContext>();
+                    ILogger<CustomApplicationFactory> logger = scopedServices
+                        .GetRequiredService<ILogger<CustomApplicationFactory>>();
 
                     db.Database.EnsureCreated();
 

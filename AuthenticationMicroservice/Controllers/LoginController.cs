@@ -44,7 +44,7 @@ namespace AuthenticationMicroservice.Controllers
             if (string.IsNullOrWhiteSpace(userLogin.Username) || string.IsNullOrWhiteSpace(userLogin.Password))
                 return NotFound("User doesn't exist");
 
-            UserDto? loggedInUser = await _authenticateService.AuthenticateAsync(userLogin.Username!, userLogin.Password!);
+            UserDto? loggedInUser = await _authenticateService.AuthenticateAsync(userLogin.Username!);
 
             if (loggedInUser == null)
                 return NotFound("User doesn't exist");

@@ -47,11 +47,11 @@ namespace AuthenticationMicroservice.Controllers
             if (!isExist || !ModelState.IsValid)
                 return NotFound();
 
-            var claimsIdentity = User.Identity as ClaimsIdentity;
+            /*var claimsIdentity = User.Identity as ClaimsIdentity;
             var currentUserId = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (new Guid(currentUserId!) != userId)
-                return Unauthorized("You do not have premission for this action");
+                return Unauthorized("You do not have premission for this action");*/
 
             var user = await _usersService.GetByIdAsync(userId);
 
@@ -75,23 +75,23 @@ namespace AuthenticationMicroservice.Controllers
             if (isExistName)
                 return NotFound("Username already exist");
 
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            var currentUserId = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            /*var claimsIdentity = User.Identity as ClaimsIdentity;
+            var currentUserId = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier)?.Value;*/
 
             var userMap = _mapper.Map<UserDto>(user);
 
             if (userMap == null)
                 return NotFound("User does not exist");
 
-            if (new Guid(currentUserId!) != userId)
-                return Unauthorized("You do not have premission for this action");
+            /*if (new Guid(currentUserId!) != userId)
+                return Unauthorized("You do not have premission for this action");*/
 
             await _usersService.UpdateAsync(userId, userMap);
 
             return Ok(userId);
         }
 
-        [HttpPut("name/{id}")]
+        [HttpPut("name/{userId}")]
         [Authorize(Roles = "User, Administrator")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult> UpdateNameAsync(Guid userId, UserNameModel user)
@@ -115,7 +115,7 @@ namespace AuthenticationMicroservice.Controllers
             return Ok(userId);
         }
 
-        [HttpPut("email/{id}")]
+        [HttpPut("email/{userId}")]
         [Authorize(Roles = "User, Administrator")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult> UpdateEmailAsync(Guid userId, UserEmailModel user)
@@ -135,7 +135,7 @@ namespace AuthenticationMicroservice.Controllers
             return Ok(userId);
         }
 
-        [HttpPut("password/{id}")]
+        [HttpPut("password/{userId}")]
         [Authorize(Roles = "User, Administrator")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult> UpdatePasswordAsync(Guid userId, UserPasswordModel user)
@@ -155,7 +155,7 @@ namespace AuthenticationMicroservice.Controllers
             return Ok(userId);
         }
  
-        [HttpPut("reset/{id}")]
+        [HttpPut("reset/{userId}")]
         [Authorize(Roles = "Administrator")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult> ResetPasswordAsync(Guid userId)
@@ -182,11 +182,11 @@ namespace AuthenticationMicroservice.Controllers
 
             Task<UserDto> userToDelete = _usersService.GetByIdAsync(userId)!;
 
-            var claimsIdentity = User.Identity as ClaimsIdentity;
+            /*var claimsIdentity = User.Identity as ClaimsIdentity;
             var currentUserId = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (new Guid(currentUserId!) != userId)
-                return Unauthorized("You do not have premission for this action");
+                return Unauthorized("You do not have premission for this action");*/
 
             await _usersService.DeleteAsync(await userToDelete);
 

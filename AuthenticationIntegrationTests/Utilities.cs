@@ -1,5 +1,5 @@
-﻿using Repositories.Context;
-using Repositories.Entities;
+﻿using Repositories.Entities;
+using Repositories.Context;
 
 namespace AuthenticationIntegrationTests
 {
@@ -25,23 +25,43 @@ namespace AuthenticationIntegrationTests
             {
                 new UserEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = new Guid("cefb4981-6f36-4405-b633-361270085433"),
                     CreatedDate = DateTime.UtcNow,
                     EmailAddress = "SonicHedgehog@gmail.com",
                     Username = "Sonic",
-                    RoleId = GetRole().Id,
+                    RoleId = GetRole()[0].Id,
                     Password = BCrypt.Net.BCrypt.HashPassword("administrator")
                 },
+
+                new UserEntity
+                {
+                    Id = new Guid("0da216b5-873d-491f-9641-a6b9ebaf7ee3"),
+                    CreatedDate = DateTime.UtcNow,
+                    EmailAddress = "User@gmail.com",
+                    Username = "User",
+                    RoleId = GetRole()[1].Id,
+                    Password = BCrypt.Net.BCrypt.HashPassword("useruser")
+                }
             };
         }
 
-        public static RoleEntity GetRole()
+        public static List<RoleEntity> GetRole()
         {
-            return new RoleEntity
+            return new List<RoleEntity>()
             {
-                Id = new Guid("a446525a-41c8-4722-8152-5c72e3efd01d"),
-                CreatedDate = DateTime.UtcNow,
-                Role = "Administrator"
+                new RoleEntity
+                {
+                    Id = new Guid("a446525a-41c8-4722-8152-5c72e3efd01d"),
+                    CreatedDate = DateTime.UtcNow,
+                    Role = "Administrator"
+                },
+
+                new RoleEntity
+                {
+                    Id = new Guid("01ff0f71-519b-48f6-8b78-3e1210d2495b"),
+                    CreatedDate = DateTime.UtcNow,
+                    Role = "User"
+                }
             };
         }
     }

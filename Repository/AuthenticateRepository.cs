@@ -12,11 +12,9 @@ namespace Repositories
         public AuthenticateRepository(DataContext context) => _context = context;
 
         // GET
-        public async Task<UserEntity?> AuthenticateAsync(string username, string password)
+        public async Task<UserEntity?> AuthenticateAsync(string username)
         {
-            return await _context.Users.Where(u => u.Username!.ToLower()
-                                       .Equals(username))
-                                       .FirstOrDefaultAsync();
+            return await _context.Users.Where(u => u.Username!.Equals(username)).FirstOrDefaultAsync();
         }
     }
 }

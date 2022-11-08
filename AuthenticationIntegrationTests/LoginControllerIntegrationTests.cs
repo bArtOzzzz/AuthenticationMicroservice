@@ -1,5 +1,4 @@
 ﻿using AuthenticationMicroservice.Models.Request;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -9,9 +8,9 @@ using Xunit;
 
 namespace AuthenticationIntegrationTests
 {
-    public class LoginControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class LoginControllerIntegrationTests : IClassFixture<CustomApplicationFactory>, IDisposable
     {
-        private readonly WebApplicationFactory<Program> _factory;
+        private readonly CustomApplicationFactory _factory;
         private readonly HttpClient _client;
 
         private const string isExistEndpointUrl = "/api/v1/Exist/";
@@ -19,7 +18,7 @@ namespace AuthenticationIntegrationTests
         private const string tokenEndpointUrl = "/api/v1/RefreshToken";
         private const string registerEndpointUrl = "/api/v1/Register";
 
-        public LoginControllerIntegrationTests(WebApplicationFactory<Program> factory)
+        public LoginControllerIntegrationTests(CustomApplicationFactory factory)
         {
             _factory = factory;
             _client = _factory.CreateClient();
@@ -187,5 +186,7 @@ namespace AuthenticationIntegrationTests
             // Assert
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         }
+
+        public async void Dispose() => await Task.CompletedTask;
     }
 }

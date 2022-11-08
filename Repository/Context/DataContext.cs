@@ -16,8 +16,7 @@ namespace Repositories.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Guid[] GuidRoleArr = { Guid.NewGuid(),
-                                   Guid.NewGuid() };
+            Guid[] GuidRoleArr = { Guid.NewGuid(), Guid.NewGuid() };
 
             modelBuilder.Entity<UserEntity>(
                 entity =>
