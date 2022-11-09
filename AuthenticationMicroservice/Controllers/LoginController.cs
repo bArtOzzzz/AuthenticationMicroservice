@@ -90,7 +90,7 @@ namespace AuthenticationMicroservice.Controllers
             UserDto? userMap = _mapper.Map<UserDto>(userRegister);
 
             if (await _registerService.ExistsAsync(userMap.Username!) == true)
-                return UnprocessableEntity("Username already exist"); //422 or 409 (Conflict)
+                return UnprocessableEntity("Username already exist");
 
             Guid userId;
 

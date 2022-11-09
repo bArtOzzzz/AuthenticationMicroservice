@@ -27,7 +27,6 @@ namespace AuthenticationIntegrationTests
 
         public async Task InitializeAsync()
         {
-            // Authentication when Administrator login
             var userData = new UserLoginModel()
             {
                 Username = "Sonic",
