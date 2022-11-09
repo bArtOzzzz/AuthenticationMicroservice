@@ -1,4 +1,5 @@
 ﻿using AuthenticationMicroservice.Models.Request;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -10,7 +11,6 @@ namespace AuthenticationIntegrationTests
 {
     public class UsersControllerIntegrationTestsWhenAdministrator : IClassFixture<CustomApplicationFactory>, IAsyncLifetime
     {
-        private readonly CustomApplicationFactory _factory;
         private readonly HttpClient _client;
 
         private const string getUsersEndpointUrl = "/api/v2/Users";
@@ -20,8 +20,7 @@ namespace AuthenticationIntegrationTests
 
         public UsersControllerIntegrationTestsWhenAdministrator(CustomApplicationFactory factory)
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            _client = factory.CreateClient();
         }
 
         public async Task InitializeAsync()
@@ -37,7 +36,7 @@ namespace AuthenticationIntegrationTests
             string responseBodyTokens = await responseTokens.Content.ReadAsStringAsync();
             var responseWithValidDataTokens = JsonConvert.DeserializeObject<TokenDto>(responseBodyTokens)!;
 
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", $"{responseWithValidDataTokens.AccessToken}");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", $"{responseWithValidDataTokens.AccessToken}");
         }
 
         [Fact]

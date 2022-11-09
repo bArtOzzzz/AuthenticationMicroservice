@@ -41,6 +41,26 @@ namespace AuthenticationIntegrationTests
                     Username = "User",
                     RoleId = GetRole()[1].Id,
                     Password = BCrypt.Net.BCrypt.HashPassword("useruser")
+                },
+
+                new UserEntity
+                {
+                    Id = new Guid("071fc8e4-28b9-4bf4-b169-9ef3a063ce8b"),
+                    CreatedDate = DateTime.UtcNow,
+                    EmailAddress = "testuser@gmail.com",
+                    Username = "TestUser",
+                    RoleId = GetRole()[0].Id,
+                    Password = BCrypt.Net.BCrypt.HashPassword("administrator")
+                },
+
+                new UserEntity
+                {
+                    Id = new Guid("94749344-4583-406e-9e76-846c39e6b6d2"),
+                    CreatedDate = DateTime.UtcNow,
+                    EmailAddress = "testuser@gmail.com",
+                    Username = "AnotherTestUserName",
+                    RoleId = GetRole()[0].Id,
+                    Password = BCrypt.Net.BCrypt.HashPassword("administrator")
                 }
             };
         }

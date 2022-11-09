@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Services.Abstract;
 using Services.Dto;
 using AutoMapper;
+using IdentityModel;
 
 namespace AuthenticationMicroservice.Controllers
 {
@@ -47,10 +48,10 @@ namespace AuthenticationMicroservice.Controllers
             if (!isExist || !ModelState.IsValid)
                 return NotFound();
 
-            /*var claimsIdentity = User.Identity as ClaimsIdentity;
-            var currentUserId = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //string claimsIdentity = User.Claims.FirstOrDefault()!.Value;
+            //var currentUserId = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (new Guid(currentUserId!) != userId)
+            /*if (new Guid(currentUserId!) != userId)
                 return Unauthorized("You do not have premission for this action");*/
 
             var user = await _usersService.GetByIdAsync(userId);

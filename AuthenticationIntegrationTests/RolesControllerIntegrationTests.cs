@@ -1,4 +1,5 @@
 ﻿using AuthenticationMicroservice.Models.Request;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -10,7 +11,6 @@ namespace AuthenticationIntegrationTests
 {
     public class RolesControllerIntegrationTests : IClassFixture<CustomApplicationFactory>, IAsyncLifetime
     {
-        private readonly CustomApplicationFactory _factory;
         private readonly HttpClient _client;
 
         private const string getRolesEndpointUrl = "/api/v2/Roles";
@@ -24,8 +24,7 @@ namespace AuthenticationIntegrationTests
 
         public RolesControllerIntegrationTests(CustomApplicationFactory factory)
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            _client = factory.CreateClient();
         }
 
         public async Task InitializeAsync()
@@ -41,7 +40,7 @@ namespace AuthenticationIntegrationTests
             string responseBodyTokens = await responseTokens.Content.ReadAsStringAsync();
             var responseWithValidDataTokens = JsonConvert.DeserializeObject<TokenDto>(responseBodyTokens)!;
 
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", $"{responseWithValidDataTokens.AccessToken}");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", $"{responseWithValidDataTokens.AccessToken}");
         }
 
         [Fact]
@@ -78,10 +77,7 @@ namespace AuthenticationIntegrationTests
         public async Task CreateAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            RoleModel roleModel = new RoleModel()
-            {
-                Role = "UltimatePower"
-            };
+            RoleModel roleModel = new() { Role = "UltimatePower" };
 
             // Act
             var response = await _client.PostAsJsonAsync(postRolesEndpointUrl, roleModel);
@@ -94,10 +90,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateByUserAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            RoleModel roleModel = new RoleModel()
-            {
-                Role = "UltimatePower"
-            };
+            RoleModel roleModel = new() { Role = "UltimatePower" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putRolesUpdateRoleForUserEndpointUrl + "0da216b5-873d-491f-9641-a6b9ebaf7ee3", roleModel);
@@ -110,10 +103,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateByUserAsync_WhenRequestInvalid_Returns_NotFound()
         {
             // Arrange
-            RoleModel roleModel = new RoleModel()
-            {
-                Role = "UltimatePower"
-            };
+            RoleModel roleModel = new() { Role = "UltimatePower" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putRolesUpdateRoleForUserEndpointUrl + Guid.NewGuid(), roleModel);
@@ -126,10 +116,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            RoleModel roleModel = new RoleModel()
-            {
-                Role = "UltimatePower"
-            };
+            RoleModel roleModel = new() { Role = "Administrator" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putRolesByIdEndpointUrl + "a446525a-41c8-4722-8152-5c72e3efd01d", roleModel);
@@ -142,10 +129,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateAsync_WhenRequestWithInvalidId_Returns_NotFound()
         {
             // Arrange
-            RoleModel roleModel = new RoleModel()
-            {
-                Role = "UltimatePower"
-            };
+            RoleModel roleModel = new() { Role = "UltimatePower" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putRolesByIdEndpointUrl + Guid.NewGuid(), roleModel);

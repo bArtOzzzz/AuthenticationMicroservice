@@ -1,4 +1,5 @@
 ﻿using AuthenticationMicroservice.Models.Request;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -10,7 +11,6 @@ namespace AuthenticationIntegrationTests
 {
     public class UsersControllerIntegrationTestsWhenUser : IClassFixture<CustomApplicationFactory>, IAsyncLifetime
     {
-        private readonly CustomApplicationFactory _factory;
         private readonly HttpClient _client;
 
         private const string getUsersEndpointUrl = "/api/v2/Users";
@@ -26,8 +26,7 @@ namespace AuthenticationIntegrationTests
 
         public UsersControllerIntegrationTestsWhenUser(CustomApplicationFactory factory)
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            _client = factory.CreateClient();
         }
 
         public async Task InitializeAsync()
@@ -43,7 +42,7 @@ namespace AuthenticationIntegrationTests
             string responseBodyTokens = await responseTokens.Content.ReadAsStringAsync();
             var responseWithValidDataTokens = JsonConvert.DeserializeObject<TokenDto>(responseBodyTokens)!;
 
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", $"{responseWithValidDataTokens.AccessToken}");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", $"{responseWithValidDataTokens.AccessToken}");
         }
 
         [Fact]
@@ -80,7 +79,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            UserModel userModel = new UserModel
+            UserModel userModel = new()
             {
                 Username = "NewName",
                 EmailAddress = "newname@gmail.com",
@@ -89,7 +88,7 @@ namespace AuthenticationIntegrationTests
             };
 
             // Act
-            var response = await _client.PutAsJsonAsync(putUserByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433", userModel);
+            var response = await _client.PutAsJsonAsync(putUserByIdEndpointUrl + "071fc8e4-28b9-4bf4-b169-9ef3a063ce8b", userModel);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -99,7 +98,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateAsync_WhenRequestWithInvalidId_Returns_NotFound()
         {
             // Arrange
-            UserModel userModel = new UserModel
+            UserModel userModel = new()
             {
                 Username = "NewName",
                 EmailAddress = "newname@gmail.com",
@@ -118,7 +117,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateAsync_WhenRequestWithExistedName_Returns_NotFound()
         {
             // Arrange
-            UserModel userModel = new UserModel
+            UserModel userModel = new()
             {
                 Username = "Sonic",
                 EmailAddress = "newname@gmail.com",
@@ -127,7 +126,7 @@ namespace AuthenticationIntegrationTests
             };
 
             // Act
-            var response = await _client.PutAsJsonAsync(putUserByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433", userModel);
+            var response = await _client.PutAsJsonAsync(putUserByIdEndpointUrl + "071fc8e4-28b9-4bf4-b169-9ef3a063ce8b", userModel);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -137,10 +136,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateNameAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            UserNameModel userNameModel = new UserNameModel
-            {
-                Username = "NewTestName"
-            };
+            UserNameModel userNameModel = new() { Username = "NewTestName" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putUserNameByIdEndpointUrl + "0da216b5-873d-491f-9641-a6b9ebaf7ee3", userNameModel);
@@ -153,10 +149,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateNameAsync_WhenRequestWithIdInvalid_Returns_NotFound()
         {
             // Arrange
-            UserNameModel userNameModel = new UserNameModel
-            {
-                Username = "AbsolutelyNewTestName"
-            };
+            UserNameModel userNameModel = new() { Username = "AbsolutelyNewTestName" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putUserNameByIdEndpointUrl + Guid.NewGuid(), userNameModel);
@@ -169,13 +162,10 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateNameAsync_WhenRequestWithExistedName_Returns_NotFound()
         {
             // Arrange
-            UserNameModel userNameModel = new UserNameModel
-            {
-                Username = "Sonic"
-            };
+            UserNameModel userNameModel = new() { Username = "AnotherTestUserName" };
 
             // Act
-            var response = await _client.PutAsJsonAsync(putUserNameByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433", userNameModel);
+            var response = await _client.PutAsJsonAsync(putUserNameByIdEndpointUrl + "94749344-4583-406e-9e76-846c39e6b6d2", userNameModel);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -185,10 +175,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateEmailAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            UserEmailModel userEmailModel = new UserEmailModel
-            {
-                EmailAddress = "testemail@gmail.com"
-            };
+            UserEmailModel userEmailModel = new() { EmailAddress = "testemail@gmail.com" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putUsersEmailByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433", userEmailModel);
@@ -201,10 +188,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdateEmailAsync_WhenRequestWithInvalidId_Returns_NotFound()
         {
             // Arrange
-            UserEmailModel userEmailModel = new UserEmailModel
-            {
-                EmailAddress = "testemail@gmail.com"
-            };
+            UserEmailModel userEmailModel = new() { EmailAddress = "testemail@gmail.com" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putUsersEmailByIdEndpointUrl + Guid.NewGuid(), userEmailModel);
@@ -217,13 +201,10 @@ namespace AuthenticationIntegrationTests
         public async Task UpdatePasswordAsync_WhenRequestValid_Returns_Ok()
         {
             // Arrange
-            UserPasswordModel userPasswordModel = new UserPasswordModel
-            {
-                Password = "AnyValidPassword"
-            };
+            UserPasswordModel userPasswordModel = new() { Password = "AnyValidPassword" };
 
             // Act
-            var response = await _client.PutAsJsonAsync(putUsersPasswordByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433", userPasswordModel);
+            var response = await _client.PutAsJsonAsync(putUsersPasswordByIdEndpointUrl + "071fc8e4-28b9-4bf4-b169-9ef3a063ce8b", userPasswordModel);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -233,10 +214,7 @@ namespace AuthenticationIntegrationTests
         public async Task UpdatePasswordAsync_WhenRequestWithInvalidId_Returns_NotFound()
         {
             // Arrange
-            UserPasswordModel userPasswordModel = new UserPasswordModel
-            {
-                Password = "AnyValidPassword"
-            };
+            UserPasswordModel userPasswordModel = new() { Password = "AnyValidPassword" };
 
             // Act
             var response = await _client.PutAsJsonAsync(putUsersPasswordByIdEndpointUrl + Guid.NewGuid(), userPasswordModel);
@@ -250,7 +228,7 @@ namespace AuthenticationIntegrationTests
         {
             // Act
             // Any data model
-            var response = await _client.PutAsJsonAsync(putUsersResetPasswordByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433", new UserModel());
+            var response = await _client.PutAsJsonAsync(putUsersResetPasswordByIdEndpointUrl + "071fc8e4-28b9-4bf4-b169-9ef3a063ce8b", new UserModel());
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -260,7 +238,7 @@ namespace AuthenticationIntegrationTests
         public async Task DeleteAsync_WhenRequestValid_Returns_NoContent()
         {
             // Act
-            var response = await _client.DeleteAsync(deleteUserByIdEndpointUrl + "cefb4981-6f36-4405-b633-361270085433");
+            var response = await _client.DeleteAsync(deleteUserByIdEndpointUrl + "071fc8e4-28b9-4bf4-b169-9ef3a063ce8b");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);

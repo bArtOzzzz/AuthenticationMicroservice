@@ -1,4 +1,5 @@
 ﻿using AuthenticationMicroservice.Models.Request;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -8,9 +9,8 @@ using Xunit;
 
 namespace AuthenticationIntegrationTests
 {
-    public class LoginControllerIntegrationTests : IClassFixture<CustomApplicationFactory>, IDisposable
+    public class LoginControllerIntegrationTests : IClassFixture<CustomApplicationFactory>, IAsyncLifetime
     {
-        private readonly CustomApplicationFactory _factory;
         private readonly HttpClient _client;
 
         private const string isExistEndpointUrl = "/api/v1/Exist/";
@@ -18,11 +18,27 @@ namespace AuthenticationIntegrationTests
         private const string tokenEndpointUrl = "/api/v1/RefreshToken";
         private const string registerEndpointUrl = "/api/v1/Register";
 
+        private TokenDto _tokenDto = null!;
+
         public LoginControllerIntegrationTests(CustomApplicationFactory factory)
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            _client = factory.CreateClient();
         }
+
+        public async Task InitializeAsync()
+        {
+            // Authentication when Administrator login
+            var userData = new UserLoginModel()
+            {
+                Username = "Sonic",
+                Password = "administrator"
+            };
+
+            var responseTokens = await _client.PostAsJsonAsync(loginEndpointUrl, userData);
+            string responseBodyTokens = await responseTokens.Content.ReadAsStringAsync();
+            _tokenDto = JsonConvert.DeserializeObject<TokenDto>(responseBodyTokens)!;
+        }
+
 
         [Fact]
         public async Task IsExistAsync_WhenRequestValid_Returns_Ok()
@@ -56,7 +72,6 @@ namespace AuthenticationIntegrationTests
             string responseBody = await response.Content.ReadAsStringAsync();
             var responseWithValidData = JsonConvert.DeserializeObject<TokenDto>(responseBody)!;
 
-            responseWithValidData.Should().BeOfType<TokenDto>();
             responseWithValidData.AccessToken.Should().NotBeNullOrEmpty();
             responseWithValidData.RefreshToken.Should().NotBeNullOrEmpty();
         }
@@ -109,29 +124,20 @@ namespace AuthenticationIntegrationTests
         public async Task RefreshTokenAsync_WhenRequestValid_Returns_OK()
         {
             // Arrange
-            var userData = new UserLoginModel()
-            {
-                Username = "Sonic",
-                Password = "administrator"
-            };
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue($"Bearer", $"{_tokenDto.AccessToken}");
 
             // Act
-            var responseTokens = await _client.PostAsJsonAsync(loginEndpointUrl, userData);
-            string responseBodyTokens = await responseTokens.Content.ReadAsStringAsync();
-            var responseWithValidDataTokens = JsonConvert.DeserializeObject<TokenDto>(responseBodyTokens)!;
-
-            var responseRefresh = await _client.PostAsJsonAsync(tokenEndpointUrl, responseWithValidDataTokens);
+            var responseRefresh = await _client.PostAsJsonAsync(tokenEndpointUrl, _tokenDto);
             string responseBodyRefresh = await responseRefresh.Content.ReadAsStringAsync();
             var responseWithValidDataRefresh = JsonConvert.DeserializeObject<TokenDto>(responseBodyRefresh)!;
 
             // Assert
             responseRefresh.StatusCode.Should().Be(HttpStatusCode.OK);
-            responseWithValidDataRefresh.Should().BeOfType<TokenDto>();
 
             responseWithValidDataRefresh.AccessToken.Should().NotBeNullOrEmpty();
             responseWithValidDataRefresh.RefreshToken.Should().NotBeNullOrEmpty();
 
-            responseWithValidDataRefresh.Should().NotBeEquivalentTo(responseWithValidDataTokens);
+            responseWithValidDataRefresh.Should().NotBeEquivalentTo(_tokenDto);
         }
 
         [Fact]
@@ -187,6 +193,6 @@ namespace AuthenticationIntegrationTests
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        public async void Dispose() => await Task.CompletedTask;
+        public async Task DisposeAsync() => await Task.CompletedTask;
     }
 }
