@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Services.Dto;
 using System.Net;
 using Xunit;
+using System.Security.Claims;
 
 namespace AuthenticationIntegrationTests
 {

@@ -2,6 +2,7 @@
 using AuthenticationMicroservice.Models.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Services.Abstract;
 using Services.Dto;
 using AutoMapper;
@@ -46,6 +47,11 @@ namespace AuthenticationMicroservice.Controllers
             if (!isExist || !ModelState.IsValid)
                 return NotFound();
 
+            string? tokenClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(tokenClaim))
+                return Unauthorized("Invalid authorization data");
+
             var user = await _usersService.GetByIdAsync(userId);
 
             if (user == null)
@@ -73,6 +79,11 @@ namespace AuthenticationMicroservice.Controllers
             if (userMap == null)
                 return NotFound("User does not exist");
 
+            string? tokenClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(tokenClaim))
+                return Unauthorized("Invalid authorization data");
+
             await _usersService.UpdateAsync(userId, userMap);
 
             return Ok(userId);
@@ -97,6 +108,11 @@ namespace AuthenticationMicroservice.Controllers
             if (userMap == null)
                 return NotFound("User does not exist");
 
+            string? tokenClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(tokenClaim))
+                return Unauthorized("Invalid authorization data");
+
             await _usersService.UpdateNameAsync(userId, userMap);
 
             return Ok(userId);
@@ -117,6 +133,11 @@ namespace AuthenticationMicroservice.Controllers
             if (userMap == null)
                 return NotFound("User does not exist");
 
+            string? tokenClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(tokenClaim))
+                return Unauthorized("Invalid authorization data");
+
             await _usersService.UpdateEmailAsync(userId, userMap);
 
             return Ok(userId);
@@ -136,6 +157,11 @@ namespace AuthenticationMicroservice.Controllers
 
             if (userMap == null)
                 return NotFound("User does not exist");
+
+            string? tokenClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(tokenClaim))
+                return Unauthorized("Invalid authorization data");
 
             await _usersService.UpdatePasswordAsync(userId, userMap);
 
@@ -168,6 +194,11 @@ namespace AuthenticationMicroservice.Controllers
                 return NotFound("User does not exist");
 
             Task<UserDto> userToDelete = _usersService.GetByIdAsync(userId)!;
+
+            string? tokenClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(tokenClaim))
+                return Unauthorized("Invalid authorization data");
 
             await _usersService.DeleteAsync(await userToDelete);
 
