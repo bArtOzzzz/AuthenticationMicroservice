@@ -26,24 +26,22 @@ namespace AuthenticationIntegrationTests
 
                 ServiceProvider sp = services.BuildServiceProvider();
 
-                using (IServiceScope scope = sp.CreateScope())
+                using IServiceScope scope = sp.CreateScope();
+                IServiceProvider scopedServices = scope.ServiceProvider;
+                DataContext db = scopedServices.GetRequiredService<DataContext>();
+                ILogger<CustomApplicationFactory> logger = scopedServices
+                    .GetRequiredService<ILogger<CustomApplicationFactory>>();
+
+                db.Database.EnsureCreated();
+
+                try
                 {
-                    IServiceProvider scopedServices = scope.ServiceProvider;
-                    DataContext db = scopedServices.GetRequiredService<DataContext>();
-                    ILogger<CustomApplicationFactory> logger = scopedServices
-                        .GetRequiredService<ILogger<CustomApplicationFactory>>();
-
-                    db.Database.EnsureCreated();
-
-                    try
-                    {
-                        Utilities.InitializeDbForTests(db);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                            "database with test messages. Error: {Message}", ex.Message);
-                    }
+                    Utilities.InitializeDbForTests(db);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred seeding the " +
+                        "database with test messages. Error: {Message}", ex.Message);
                 }
             });
         }

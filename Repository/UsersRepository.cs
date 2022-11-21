@@ -117,7 +117,7 @@ namespace Repositories
 
         //___________________________________________
         // Generate random password (For reset)
-        private Random random = new Random();
+        private readonly Random random = new();
 
         public string RandomString(int length)
         {

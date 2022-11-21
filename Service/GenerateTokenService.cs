@@ -48,10 +48,10 @@ namespace Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.EmailAddress!),
-                    new Claim(ClaimTypes.Role, currentRole.Role!)
+                    new Claim(ClaimTypes.Role, currentRole!.Role!)
                 };
 
-                JwtSecurityToken? token = new JwtSecurityToken(
+                JwtSecurityToken? token = new(
                     issuer: _configuration["Jwt:Issuer"],
                     audience: _configuration["Jwt:Audience"],
                     claims: claims,
@@ -70,28 +70,24 @@ namespace Services
         public async Task<string?> CreateRefreshTokenAsync(UserDto user)
         {
             byte[]? randomNumber = new byte[32];
-            using (RandomNumberGenerator? rng = RandomNumberGenerator.Create())
+            using RandomNumberGenerator? rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            string? refreshToken = Convert.ToBase64String(randomNumber);
+
+            if (refreshToken != null)
             {
-                rng.GetBytes(randomNumber);
-                string? refreshToken = Convert.ToBase64String(randomNumber);
-
-                if (refreshToken != null)
-                {
-                    user.RefreshToken = refreshToken;
-                    user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-                }
-
-                await _generateTokenRepository.CreateRefreshTokenAsync(_mapper.Map<UserEntity>(user));
-
-                return refreshToken;
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             }
+
+            await _generateTokenRepository.CreateRefreshTokenAsync(_mapper.Map<UserEntity>(user));
+
+            return refreshToken;
         }
 
         public async Task<TokenDto?> TokenAuthenticateAsync(UserDto user, string accessToken)
         {
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-
-            SecurityToken securityToken;
+            JwtSecurityTokenHandler tokenHandler = new();
             ClaimsPrincipal? principal = tokenHandler.ValidateToken(accessToken, new TokenValidationParameters
             {
                 ValidateActor = true,
@@ -102,9 +98,9 @@ namespace Services
                 ValidAudience = _configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
                                        Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]))
-            }, out securityToken);
+            }, out _);
 
-            JwtSecurityToken? token = new JwtSecurityToken(
+            JwtSecurityToken? token = new(
                 claims: principal.Claims.ToArray(),
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: new SigningCredentials(
@@ -113,7 +109,7 @@ namespace Services
                                         SecurityAlgorithms.HmacSha512Signature));
 
             string? jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-            TokenDto response = new TokenDto()
+            TokenDto response = new()
             {
                 AccessToken = jwtToken,
                 RefreshToken = await CreateRefreshTokenAsync(user)

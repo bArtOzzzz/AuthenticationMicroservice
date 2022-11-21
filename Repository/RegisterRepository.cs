@@ -37,7 +37,7 @@ namespace Repositories
         // EXISTS
         public async Task<bool> ExistsAsync(string username)
         {
-            var result = await _context.Users.Where(u => u.Username.Equals(username))
+            var result = await _context.Users.Where(u => u.Username!.Equals(username))
                                              .FirstOrDefaultAsync();
 
             if (result != null)
