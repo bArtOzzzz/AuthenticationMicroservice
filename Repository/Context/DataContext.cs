@@ -26,7 +26,8 @@ namespace Repositories.Context
 
                     entity.HasOne(u => u.Role)
                           .WithMany(r => r.Users)
-                          .HasForeignKey(u => u.RoleId);
+                          .HasForeignKey(u => u.RoleId)
+                          .OnDelete(DeleteBehavior.Cascade);
 
                     entity.HasIndex(n => n.Username)
                           .IsUnique();
