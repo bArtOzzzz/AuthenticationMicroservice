@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using AuthenticationMicroservice.Validation;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using HealthChecks.UI.Client;
 using Repositories.Abstract;
 using Repositories.Context;
 using Services.Abstract;
+using Azure.Identity;
 using Repositories;
 using System.Text;
 using Services;
@@ -45,6 +47,17 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 
 builder.Services.AddEndpointsApiExplorer();
+
+// Connection to Azure Key Vaulte
+var clientDatabase = new SecretClient(new Uri(builder.Configuration["KVUrl"]),
+                                      new ClientSecretCredential(builder.Configuration["KeyVaultDatabaseConfig:TenantId"],
+                                                                 builder.Configuration["KeyVaultDatabaseConfig:ClientId"],
+                                                                 builder.Configuration["KeyVaultDatabaseConfig:ClientSecretId"]));
+
+var clientJwt = new SecretClient(new Uri(builder.Configuration["KVUrl"]),
+                                 new ClientSecretCredential(builder.Configuration["KeyVaultJwtConfig:TenantId"],
+                                                            builder.Configuration["KeyVaultJwtConfig:ClientId"],
+                                                            builder.Configuration["KeyVaultJwtConfig:ClientSecretId"]));
 
 // Add Versioning for swagger
 builder.Services.AddSwaggerGen(c =>
@@ -83,17 +96,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt--Key").Value.Value)),
                         ClockSkew = TimeSpan.Zero
                     };
                 });
 
-// Add connection to the database
+// Add connection to local database
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration
-           .GetConnectionString("DefaultConnection"), b => b
-           .MigrationsAssembly("AuthenticationMicroservice"));
+    // Azure connection
+    options.UseSqlServer(clientDatabase.GetSecret("ConnectionStrings--ProdConnection").Value.Value);
+
+    // Local connection
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 // Add Healthcheck
@@ -107,7 +122,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", config =>
     {
         config.SetIsOriginAllowedToAllowWildcardSubdomains()
-              .WithOrigins("http://localhost:5000", "https://localhost:5001")
+              .WithOrigins("https://fridgeproductgateway.azurewebsites.net",
+                           "https://fridgeproductclient.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
