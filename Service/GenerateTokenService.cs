@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Security.Claims;
 using Repositories.Abstract;
 using Repositories.Entities;
 using Services.Abstract;
+using Azure.Identity;
 using Services.Dto;
 using System.Text;
 using AutoMapper;
@@ -44,21 +46,26 @@ namespace Services
             {
                 RoleEntity? currentRole = await _rolesRepository.GetByIdAsync(user.RoleId);
 
-                Claim[]? claims = new[]
+                Claim[] claims = new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.EmailAddress!),
                     new Claim(ClaimTypes.Role, currentRole!.Role!)
                 };
 
-                JwtSecurityToken? token = new(
+                var clientJwt = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVUrl")!),
+                                new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantIdJwt"),
+                                                           Environment.GetEnvironmentVariable("ClientIdJwt"),
+                                                           Environment.GetEnvironmentVariable("ClientSecretIdJwt")));
+
+                JwtSecurityToken token = new(
                     issuer: _configuration["Jwt:Issuer"],
                     audience: _configuration["Jwt:Audience"],
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(5),
+                    expires: DateTime.UtcNow.AddMinutes(15),
                     signingCredentials: new SigningCredentials(
                                         new SymmetricSecurityKey(
-                                            Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
+                                            Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt--Key").Value.Value)),
                                             SecurityAlgorithms.HmacSha512Signature));
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
@@ -69,10 +76,10 @@ namespace Services
 
         public async Task<string?> CreateRefreshTokenAsync(UserDto user)
         {
-            byte[]? randomNumber = new byte[32];
-            using RandomNumberGenerator? rng = RandomNumberGenerator.Create();
+            byte[] randomNumber = new byte[32];
+            using RandomNumberGenerator rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
-            string? refreshToken = Convert.ToBase64String(randomNumber);
+            string refreshToken = Convert.ToBase64String(randomNumber);
 
             if (refreshToken != null)
             {
@@ -87,8 +94,13 @@ namespace Services
 
         public async Task<TokenDto?> TokenAuthenticateAsync(UserDto user, string accessToken)
         {
+            var clientJwt = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVUrl")!),
+                            new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantIdJwt"),
+                                                       Environment.GetEnvironmentVariable("ClientIdJwt"),
+                                                       Environment.GetEnvironmentVariable("ClientSecretIdJwt")));
+
             JwtSecurityTokenHandler tokenHandler = new();
-            ClaimsPrincipal? principal = tokenHandler.ValidateToken(accessToken, new TokenValidationParameters
+            ClaimsPrincipal principal = tokenHandler.ValidateToken(accessToken, new TokenValidationParameters
             {
                 ValidateActor = true,
                 ValidateAudience = true,
@@ -97,18 +109,18 @@ namespace Services
                 ValidIssuer = _configuration["Jwt:Issuer"],
                 ValidAudience = _configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
-                                       Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]))
+                                       Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt--Key").Value.Value))
             }, out _);
 
-            JwtSecurityToken? token = new(
+            JwtSecurityToken token = new(
                 claims: principal.Claims.ToArray(),
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: new SigningCredentials(
                                     new SymmetricSecurityKey(
-                                        Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
+                                        Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt--Key").Value.Value)),
                                         SecurityAlgorithms.HmacSha512Signature));
 
-            string? jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
             TokenDto response = new()
             {
                 AccessToken = jwtToken,

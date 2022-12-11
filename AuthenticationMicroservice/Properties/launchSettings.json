@@ -5,11 +5,11 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_PRODUCTION": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5039"
+      //"applicationUrl": "http://localhost:5039",
+      "applicationUrl": "https://authenticationapiwebapp.azurewebsites.net"
     },
     "IIS Express": {
       "commandName": "IISExpress",

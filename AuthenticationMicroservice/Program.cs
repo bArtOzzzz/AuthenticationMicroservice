@@ -21,6 +21,31 @@ using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Key Vault URL
+Environment.SetEnvironmentVariable("KVUrl", "https://applicationkv.vault.azure.net/");
+
+// Database secret connection variables
+Environment.SetEnvironmentVariable("TenantIdDbConnection", "b15d7df0-4a92-49e8-b851-b857d77abe6d");
+Environment.SetEnvironmentVariable("ClientIdDbConnection", "7a6af262-15b3-492e-9e01-5aec28938eee");
+Environment.SetEnvironmentVariable("ClientSecretIdDbConnection", "Ngp8Q~MANIljx1l-W3Meahqn9_YwwfZJvRpEFaNr");
+
+// JWT secret connection variables
+Environment.SetEnvironmentVariable("TenantIdJwt", "b15d7df0-4a92-49e8-b851-b857d77abe6d");
+Environment.SetEnvironmentVariable("ClientIdJwt", "4a24b450-5411-4bfb-81f9-4c57012c76da");
+Environment.SetEnvironmentVariable("ClientSecretIdJwt", "ERn8Q~rECB-xVsKnAVyFoNzqyK8ii4EN60rrVcAm");
+
+// Connection to Azure Key Vaulte Database connection
+var clientDatabase = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVUrl")!),
+                                      new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantIdDbConnection"),
+                                                                 Environment.GetEnvironmentVariable("ClientIdDbConnection"),
+                                                                 Environment.GetEnvironmentVariable("ClientSecretIdDbConnection")));
+
+// Connection to Azure Key Vaulte Jwt
+var clientJwt = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVUrl")!),
+                                 new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantIdJwt"),
+                                                            Environment.GetEnvironmentVariable("ClientIdJwt"),
+                                                            Environment.GetEnvironmentVariable("ClientSecretIdJwt")));
+
 // Add services to the container.
 builder.Services.AddControllers()
                 .AddJsonOptions(options =>
@@ -47,17 +72,6 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 
 builder.Services.AddEndpointsApiExplorer();
-
-// Connection to Azure Key Vaulte
-var clientDatabase = new SecretClient(new Uri(builder.Configuration["KVUrl"]),
-                                      new ClientSecretCredential(builder.Configuration["KeyVaultDatabaseConfig:TenantId"],
-                                                                 builder.Configuration["KeyVaultDatabaseConfig:ClientId"],
-                                                                 builder.Configuration["KeyVaultDatabaseConfig:ClientSecretId"]));
-
-var clientJwt = new SecretClient(new Uri(builder.Configuration["KVUrl"]),
-                                 new ClientSecretCredential(builder.Configuration["KeyVaultJwtConfig:TenantId"],
-                                                            builder.Configuration["KeyVaultJwtConfig:ClientId"],
-                                                            builder.Configuration["KeyVaultJwtConfig:ClientSecretId"]));
 
 // Add Versioning for swagger
 builder.Services.AddSwaggerGen(c =>
@@ -108,7 +122,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(clientDatabase.GetSecret("ConnectionStrings--ProdConnection").Value.Value);
 
     // Local connection
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ProductMicroservice"));
 });
 
 // Add Healthcheck
@@ -122,8 +136,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", config =>
     {
         config.SetIsOriginAllowedToAllowWildcardSubdomains()
-              .WithOrigins("https://fridgeproductgateway.azurewebsites.net",
-                           "https://fridgeproductclient.azurewebsites.net")
+              .WithOrigins("http://localhost:4200", "https://applicationclient.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
