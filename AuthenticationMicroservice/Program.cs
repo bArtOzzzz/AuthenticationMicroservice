@@ -25,25 +25,23 @@ var builder = WebApplication.CreateBuilder(args);
 Environment.SetEnvironmentVariable("KVUrl", "https://applicationkv.vault.azure.net/");
 
 // Database secret connection variables
-Environment.SetEnvironmentVariable("TenantIdDbConnection", "b15d7df0-4a92-49e8-b851-b857d77abe6d");
-Environment.SetEnvironmentVariable("ClientIdDbConnection", "7a6af262-15b3-492e-9e01-5aec28938eee");
-Environment.SetEnvironmentVariable("ClientSecretIdDbConnection", "Ngp8Q~MANIljx1l-W3Meahqn9_YwwfZJvRpEFaNr");
+Environment.SetEnvironmentVariable("TenantId", "b15d7df0-4a92-49e8-b851-b857d77abe6d");
+Environment.SetEnvironmentVariable("ClientId", "5ac2fa80-c5b0-4959-8411-ad70a93694d6");
+Environment.SetEnvironmentVariable("ClientSecretIdDbConnection", "zXc8Q~rIHIvH.85jBFL5LbtrimP3maTjZPAlOagY");
 
 // JWT secret connection variables
-Environment.SetEnvironmentVariable("TenantIdJwt", "b15d7df0-4a92-49e8-b851-b857d77abe6d");
-Environment.SetEnvironmentVariable("ClientIdJwt", "4a24b450-5411-4bfb-81f9-4c57012c76da");
-Environment.SetEnvironmentVariable("ClientSecretIdJwt", "ERn8Q~rECB-xVsKnAVyFoNzqyK8ii4EN60rrVcAm");
+Environment.SetEnvironmentVariable("ClientSecretIdJwt", "rnt8Q~_2L3fIqUenGHJ-tJrtHehzgHPXRcE3Ia_A");
 
 // Connection to Azure Key Vaulte Database connection
 var clientDatabase = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVUrl")!),
-                                      new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantIdDbConnection"),
-                                                                 Environment.GetEnvironmentVariable("ClientIdDbConnection"),
+                                      new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantId"),
+                                                                 Environment.GetEnvironmentVariable("ClientId"),
                                                                  Environment.GetEnvironmentVariable("ClientSecretIdDbConnection")));
 
 // Connection to Azure Key Vaulte Jwt
 var clientJwt = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVUrl")!),
-                                 new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantIdJwt"),
-                                                            Environment.GetEnvironmentVariable("ClientIdJwt"),
+                                 new ClientSecretCredential(Environment.GetEnvironmentVariable("TenantId"),
+                                                            Environment.GetEnvironmentVariable("ClientId"),
                                                             Environment.GetEnvironmentVariable("ClientSecretIdJwt")));
 
 // Add services to the container.
@@ -110,7 +108,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt--Key").Value.Value)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt-Secret").Value.Value)),
                         ClockSkew = TimeSpan.Zero
                     };
                 });
@@ -119,7 +117,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddDbContext<DataContext>(options =>
 {
     // Azure connection
-    options.UseSqlServer(clientDatabase.GetSecret("ConnectionStrings--ProdConnection").Value.Value);
+    options.UseSqlServer(clientDatabase.GetSecret("ConnectionString-AuthenticationConnection").Value.Value);
 
     // Local connection
     //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ProductMicroservice"));
