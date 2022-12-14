@@ -104,8 +104,7 @@ namespace Services
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = _configuration["Jwt:Issuer"],
                 ValidAudience = _configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(
-                                       Encoding.ASCII.GetBytes(_secretClient.GetSecret("Jwt-Secret").Value.Value))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_secretClient.GetSecret("Jwt-Secret").Value.Value))
             }, out _);
 
             JwtSecurityToken token = new(

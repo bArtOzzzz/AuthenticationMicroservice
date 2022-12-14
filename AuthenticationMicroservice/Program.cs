@@ -97,21 +97,25 @@ builder.Services.AddFluentValidation(x =>
 #pragma warning restore CS0618
 
 // Add JWT Bearer validation for Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt-Secret").Value.Value)),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(clientJwt.GetSecret("Jwt-Secret").Value.Value)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 // Add connection to local database
 builder.Services.AddDbContext<DataContext>(options =>
@@ -182,7 +186,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
