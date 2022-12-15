@@ -1,6 +1,7 @@
 using AuthenticationMicroservice.HealthChecks.DatabaseCheck;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using AuthenticationMicroservice.Models.Request;
 using AuthenticationMicroservice.Validation;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Azure.Security.KeyVault.Secrets;
@@ -14,6 +15,7 @@ using HealthChecks.UI.Client;
 using Repositories.Abstract;
 using Repositories.Context;
 using Services.Abstract;
+using FluentValidation;
 using Azure.Identity;
 using Repositories;
 using System.Text;
@@ -69,6 +71,12 @@ builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 
+builder.Services.AddScoped<IValidator<RoleModel>, RoleModelValidator>();
+builder.Services.AddScoped<IValidator<UserEmailModel>, UserEmailModelValidator>();
+builder.Services.AddScoped<IValidator<UserLoginModel>, UserLoginModelValidator>();
+builder.Services.AddScoped<IValidator<UserNameModel>, UserNameModelValidator>();
+builder.Services.AddScoped<IValidator<UserPasswordModel>, UserPasswordModelValidator>();
+
 builder.Services.AddEndpointsApiExplorer();
 
 // Add Versioning for swagger
@@ -87,14 +95,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Add Fluent Validation
-#pragma warning disable CS0618
-builder.Services.AddFluentValidation(x =>
-{
-    x.ImplicitlyValidateChildProperties = true;
-    x.ImplicitlyValidateRootCollectionElements = true;
-    x.RegisterValidatorsFromAssemblyContaining<RoleModelValidator>();
-});
-#pragma warning restore CS0618
+builder.Services.AddFluentValidationClientsideAdapters();
 
 // Add JWT Bearer validation for Authentication
 builder.Services.AddAuthentication(options =>
@@ -117,14 +118,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add connection to local database
+// Add connection to databases
 builder.Services.AddDbContext<DataContext>(options =>
 {
     // Azure connection
-    options.UseSqlServer(clientDatabase.GetSecret("ConnectionString-AuthenticationConnection").Value.Value);
+    options.UseSqlServer(clientDatabase.GetSecret("ConnectionString-AuthenticationConnection").Value.Value, b => b.MigrationsAssembly("AuthenticationMicroservice"));
 
     // Local connection
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("ProductMicroservice"));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AuthenticationMicroservice"));
 });
 
 // Add Healthcheck

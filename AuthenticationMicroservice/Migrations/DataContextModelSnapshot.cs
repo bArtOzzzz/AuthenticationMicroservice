@@ -32,7 +32,6 @@ namespace AuthenticationMicroservice.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Role")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -42,14 +41,14 @@ namespace AuthenticationMicroservice.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8f7e348b-82d2-4081-9bcc-bb3ef8e0fff3"),
-                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 59, 215, DateTimeKind.Utc).AddTicks(5536),
+                            Id = new Guid("8aa7be75-8787-467c-abc0-2da4fb96cc06"),
+                            CreatedDate = new DateTime(2022, 12, 15, 9, 26, 34, 428, DateTimeKind.Utc).AddTicks(1988),
                             Role = "Administrator"
                         },
                         new
                         {
-                            Id = new Guid("fd010e4d-cd37-4ca9-a98a-222c32e90e4a"),
-                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 59, 215, DateTimeKind.Utc).AddTicks(5540),
+                            Id = new Guid("d75a52f6-813d-4dd5-b759-be87c43137d9"),
+                            CreatedDate = new DateTime(2022, 12, 15, 9, 26, 34, 428, DateTimeKind.Utc).AddTicks(1991),
                             Role = "User"
                         });
                 });
@@ -64,11 +63,9 @@ namespace AuthenticationMicroservice.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefreshToken")
@@ -81,7 +78,6 @@ namespace AuthenticationMicroservice.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -89,29 +85,30 @@ namespace AuthenticationMicroservice.Migrations
                     b.HasIndex("RoleId");
 
                     b.HasIndex("Username")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Username] IS NOT NULL");
 
                     b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1c2b3665-df04-4938-8a78-5ad0db67182c"),
-                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 58, 971, DateTimeKind.Utc).AddTicks(8028),
+                            Id = new Guid("85becf9f-7834-4472-a095-79a31c6930d9"),
+                            CreatedDate = new DateTime(2022, 12, 15, 9, 26, 34, 190, DateTimeKind.Utc).AddTicks(7223),
                             EmailAddress = "SonicHedgehog@gmail.com",
-                            Password = "$2a$11$OGrzACnKXpVtzi4BPtGG/.frca7BZzcI1XPdESf3rVPYtvmqtxv5m",
+                            Password = "$2a$11$Lr/dzNnJ3YXGpn.V1rFUQelJCaZ/s1YuYeUzlTh9lyQ2f7iXlyrMq",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RoleId = new Guid("8f7e348b-82d2-4081-9bcc-bb3ef8e0fff3"),
-                            Username = "Sonic"
+                            RoleId = new Guid("8aa7be75-8787-467c-abc0-2da4fb96cc06"),
+                            Username = "Administrator"
                         },
                         new
                         {
-                            Id = new Guid("ecb68204-0d99-4b2d-9d55-c4b7351af908"),
-                            CreatedDate = new DateTime(2022, 10, 14, 7, 12, 59, 96, DateTimeKind.Utc).AddTicks(2826),
+                            Id = new Guid("e0bbd88a-6e56-498d-b137-eee4d17ef13b"),
+                            CreatedDate = new DateTime(2022, 12, 15, 9, 26, 34, 307, DateTimeKind.Utc).AddTicks(535),
                             EmailAddress = "User@gmail.com",
-                            Password = "$2a$11$N8XwZ6bno9hJyFp/PkPmv.Kb6GKoW9jOhc1.0LdANi..661PaY.xG",
+                            Password = "$2a$11$xCwdNGMtpNCChX2bA6.82ex97Uyu.5kpqnJFf.dv4DOFbbVRKZIiK",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RoleId = new Guid("fd010e4d-cd37-4ca9-a98a-222c32e90e4a"),
+                            RoleId = new Guid("d75a52f6-813d-4dd5-b759-be87c43137d9"),
                             Username = "User"
                         });
                 });

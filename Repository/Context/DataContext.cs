@@ -47,7 +47,7 @@ namespace Repositories.Context
                     Id = Guid.NewGuid(),
                     CreatedDate = DateTime.UtcNow,
                     EmailAddress = "SonicHedgehog@gmail.com",
-                    Username = "Sonic",
+                    Username = "Administrator",
                     RoleId = GuidRoleArr[0],
                     Password = BCrypt.Net.BCrypt.HashPassword("administrator")
                 },
