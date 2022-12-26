@@ -47,11 +47,10 @@ var clientJwt = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KVU
                                                             Environment.GetEnvironmentVariable("ClientSecretIdJwt")));
 
 // Add services to the container.
-builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // Enable AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
