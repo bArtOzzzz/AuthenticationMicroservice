@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Services.Abstract;
 using Services.Dto;
 using AutoMapper;
+using k8s.KubeConfigModels;
 
 namespace AuthenticationMicroservice.Controllers
 {
@@ -58,6 +59,16 @@ namespace AuthenticationMicroservice.Controllers
                 return NotFound();
 
             return Ok(_mapper.Map<UserResponse>(user));
+        }
+
+        [HttpGet("IsExist/{username}")]
+        [MapToApiVersion("2.0")]
+        public async Task<ActionResult> IsExistUserNameAsync(string username)
+        {
+            if(string.IsNullOrEmpty(username))
+                return BadRequest("Invalid Data");
+
+            return Ok(await _usersService.IsExistUserNameAsync(username));
         }
 
         [HttpPut("{userId}")]
