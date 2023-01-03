@@ -8,8 +8,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      //"applicationUrl": "http://localhost:5039"
-      "applicationUrl": "https://authenticationwebappapi.azurewebsites.net"
+      "applicationUrl": "http://localhost:5039"
+      //"applicationUrl": "https://authenticationwebappapi.azurewebsites.net"
     },
     "IIS Express": {
       "commandName": "IISExpress",
