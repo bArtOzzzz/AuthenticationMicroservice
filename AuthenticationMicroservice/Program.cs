@@ -121,10 +121,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddDbContext<DataContext>(options =>
 {
     // Azure connection
-    options.UseSqlServer(clientDatabase.GetSecret("ConnectionString-AuthenticationConnection").Value.Value, b => b.MigrationsAssembly("AuthenticationMicroservice"));
+    //options.UseSqlServer(clientDatabase.GetSecret("ConnectionString-AuthenticationConnection").Value.Value, b => b.MigrationsAssembly("AuthenticationMicroservice"));
 
     // Local connection
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AuthenticationMicroservice"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AuthenticationMicroservice"));
 });
 
 // Add Healthcheck
